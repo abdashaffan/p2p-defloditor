@@ -17,17 +17,3 @@ export const starterElements = [
     position: {x: 100, y: 125},
   }
 ];
-
-export const initHypermerge = () => {
-  const swarm = Hyperswarm({queue: {multiplex: true}});
-  let repo;
-  if (env.isProduction) {
-    // Use persistence in production
-    repo = new Repo({path: env.HYPERMERGE_PATH});
-  } else {
-    // Do not save the document in local
-    repo = new Repo({memory: true});
-  }
-  repo.addSwarm(swarm, {announce: true});
-  return {swarm,repo};
-}

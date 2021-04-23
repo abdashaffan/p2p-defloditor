@@ -7,20 +7,20 @@ import './index.css'
 import Canvas from "../Canvas";
 import '@/env';
 import UrlInput from "../Input";
-import {HypermergeContext, useEntityManager} from '../../Hooks';
+import {useEntityManager, useStateManager} from '../../Hooks';
 import {ReactFlowProvider} from "react-flow-renderer";
 import ActionButton from "../ActionButton";
-import {initHypermerge, starterElements} from "../../starter";
 
 
-const {swarm, repo} = initHypermerge();
 function Root() {
 
   const {elements, addNewShape} = useEntityManager();
+  const {docUrl} = useStateManager(null);
+
+  console.log("Workspace: ", docUrl);
 
   return (
     <div className="App">
-      <HypermergeContext.Provider value={{swarm, repo}}>
         <ReactFlowProvider>
             <Canvas elements={elements}/>
             <UrlInput/>
@@ -30,7 +30,6 @@ function Root() {
               label="Add New Shape"
             />
         </ReactFlowProvider>
-      </HypermergeContext.Provider>
     </div>
   )
 }
