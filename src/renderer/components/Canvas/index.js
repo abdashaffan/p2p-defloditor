@@ -7,7 +7,11 @@ import ReactFlow from "react-flow-renderer";
 function Canvas({elements}) {
 
   return (
-      <ReactFlow elements={elements}/>
+      <ReactFlow
+        elements={elements}
+        snapToGrid={true}
+        snapGrid={[15, 15]}
+      />
   );
 }
 

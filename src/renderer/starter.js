@@ -1,7 +1,3 @@
-import Hyperswarm from "hyperswarm";
-import env from "../common/env";
-import {Repo} from "hypermerge";
-
 export const starterElements = [
   {
     id: '1',
