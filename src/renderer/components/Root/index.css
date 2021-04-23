@@ -1,6 +1,10 @@
 .App {
+  margin: 2rem;
+  border-radius: 15px;
+  border: 1px solid #333;
   text-align: center;
   font-size: calc(10px + 2vmin);
+  height: 600px;
 }
 
 .App-logo {

@@ -7,18 +7,21 @@
     "compile": "electron-webpack",
     "dist": "yarn compile && electron-builder",
     "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null",
-    "postinstall": "npm rebuild --runtime=electron \"--target=$(electron -v)\" \"--abi=$(electron --abi)\" --disturl=https://atom.io/download/atom-shell"
+    "postinstall": "npm rebuild --runtime=electron \"--target=$(electron -v)\" \"--abi=$(electron --abi)\" --disturl=https://atom.io/download/atom-shell --scripts-prepend-node-path"
   },
   "dependencies": {
+    "bootstrap": "^4.6.0",
     "dotenv": "^8.0.0",
     "hypermerge": "github:automerge/hypermerge",
     "hyperswarm": "^2.3.1",
     "immutable": "^4.0.0-rc.12",
     "react": "^17.0.2",
+    "react-bootstrap": "^1.5.2",
     "react-dom": "^17.0.2",
     "react-flow-renderer": "^9.5.1",
     "react-hot-loader": "^4.8.3",
-    "source-map-support": "^0.5.12"
+    "source-map-support": "^0.5.12",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.4.0",

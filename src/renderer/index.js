@@ -8,7 +8,7 @@ import '@/env'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import './index.css'
-import App from './components/App/App'
+import Root from './components/Root'
 
 
-ReactDOM.render(<App />, document.getElementById('app'))
+ReactDOM.render(<Root />, document.getElementById('app'))

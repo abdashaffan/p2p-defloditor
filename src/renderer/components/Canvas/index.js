@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactFlow from 'react-flow-renderer';
+import ReactFlow from "react-flow-renderer";
 
 const elements = [
   {
@@ -28,9 +28,7 @@ const elements = [
 
 function Canvas() {
   return (
-    <div style={{height: 300}}>
       <ReactFlow elements={elements}/>
-    </div>
   );
 }
 
