@@ -10,7 +10,9 @@ let mainWindow
 
 function createMainWindow() {
   const window = new BrowserWindow({
-    webPreferences: { nodeIntegration: true }
+    width: 1000,
+    height: 1500,
+    webPreferences: { nodeIntegration: true,contextIsolation:false }
   })
 
   let url
