@@ -1,4 +1,5 @@
 import React, {createContext, useContext} from "react";
+import {useStoreState} from "react-flow-renderer";
 
 
 export const HypermergeContext = createContext({swarm: null, repo: null, url: null});
@@ -16,8 +17,7 @@ export const useHypermergeHandler = () => {
   return {setUrl, getUrl};
 }
 
-export const useShape = () => {
-  const canvasEntities = useContext(ShapeContext);
-  const getEntities = () => canvasEntities;
-  return {getEntities};
+export const useDebugger = () => {
+  const state = useStoreState(state => state);
+  return state;
 }

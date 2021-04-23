@@ -11,6 +11,7 @@ import Hyperswarm from 'hyperswarm';
 import env from "../../../common/env";
 import UrlInput from "../Input";
 import {HypermergeContext} from '../../Hooks';
+import {ReactFlowProvider} from "react-flow-renderer";
 
 // Init hypermerge
 const swarm = Hyperswarm({queue: {multiplex: true}});
@@ -24,13 +25,14 @@ if (env.isDevelopment) {
 }
 repo.addSwarm(swarm, {announce: true});
 
-
 function Root() {
   return (
     <div className="App">
       <HypermergeContext.Provider value={{swarm, repo}}>
-        <Canvas/>
-        <UrlInput/>
+        <ReactFlowProvider>
+            <Canvas/>
+            <UrlInput/>
+        </ReactFlowProvider>
       </HypermergeContext.Provider>
     </div>
   )
