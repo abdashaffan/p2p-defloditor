@@ -2,7 +2,7 @@ import { hot } from 'react-hot-loader/root'
 
 import requireStatic from '@/requireStatic'
 import React from 'react'
-import './App.css'
+import './components/App/App.css'
 
 const reactLogo = requireStatic('./react.svg')
 const electronLogo = requireStatic('electron.png')
