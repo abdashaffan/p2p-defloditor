@@ -1,13 +1,9 @@
 import {Button, FormControl, InputGroup} from "react-bootstrap";
 import React, {useState} from "react";
-import {useDebugger} from "../../Hooks";
-
 
 const UrlInput = () => {
 
   const [input, setInput] = useState("");
-  const stateDebug = useDebugger();
-  console.log(stateDebug);
 
   return (
     <InputGroup className="mb-3">

@@ -2,36 +2,33 @@
 
 import {hot} from 'react-hot-loader/root'
 
-import React from 'react'
+import React, {useState} from 'react'
 import './index.css'
 import Canvas from "../Canvas";
 import '@/env';
-import {Repo} from 'hypermerge';
-import Hyperswarm from 'hyperswarm';
-import env from "../../../common/env";
 import UrlInput from "../Input";
-import {HypermergeContext} from '../../Hooks';
+import {HypermergeContext, useEntityManager} from '../../Hooks';
 import {ReactFlowProvider} from "react-flow-renderer";
+import ActionButton from "../ActionButton";
+import {initHypermerge, starterElements} from "../../starter";
 
-// Init hypermerge
-const swarm = Hyperswarm({queue: {multiplex: true}});
-let repo;
-if (env.isDevelopment) {
-  // Use persistence in production
-  repo = new Repo({path: env.HYPERMERGE_PATH});
-} else {
-  // Do not save the document in local
-  repo = new Repo({memory: true});
-}
-repo.addSwarm(swarm, {announce: true});
 
+const {swarm, repo} = initHypermerge();
 function Root() {
+
+  const {elements, addNewShape} = useEntityManager();
+
   return (
     <div className="App">
       <HypermergeContext.Provider value={{swarm, repo}}>
         <ReactFlowProvider>
-            <Canvas/>
+            <Canvas elements={elements}/>
             <UrlInput/>
+            <ActionButton
+              variant="primary"
+              handleClick={addNewShape}
+              label="Add New Shape"
+            />
         </ReactFlowProvider>
       </HypermergeContext.Provider>
     </div>
