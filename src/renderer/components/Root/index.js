@@ -13,12 +13,15 @@ import ActionButton from "../ActionButton";
 
 
 function Root() {
-  const {elements, addNewShape} = useEntityManager();
+
+  const {elements, addNewShape,deleteShape} = useEntityManager();
+
   return (
     <div className="App">
       <ReactFlowProvider>
         <Canvas
           elements={elements}
+          handleRemove={deleteShape}
         />
         <UrlInput/>
         <ActionButton
