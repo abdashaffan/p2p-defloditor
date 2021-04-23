@@ -21,7 +21,7 @@ export const starterElements = [
 export const initHypermerge = () => {
   const swarm = Hyperswarm({queue: {multiplex: true}});
   let repo;
-  if (env.isDevelopment) {
+  if (env.isProduction) {
     // Use persistence in production
     repo = new Repo({path: env.HYPERMERGE_PATH});
   } else {
