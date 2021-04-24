@@ -26,15 +26,12 @@ class Hypermerge {
       console.log('[hypermerge watch triggered]');
       this.doc = state;
       if (callback) {
-        console.log('[before last callback from watch]');
-        console.log(state);
         callback(state);
       }
     });
   }
 
   update(handle) {
-    console.log('[hypermerge update]');
     this.repo.change(this.url, (state) => {
       handle(state);
     });
@@ -58,7 +55,6 @@ export const useEntityManager = () => {
       data: {label: 'New Node'}
     }
     hypermerge.update(state => {
-      console.log('[inside addshape handler]');
       state.elements.push(newNode);
     });
   }
