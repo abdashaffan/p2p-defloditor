@@ -17,8 +17,8 @@ class Hypermerge {
     this.url = this.repo.create({
       elements: initialElements,
       peers: {
-        1: {
-          id: 1,
+        'peer:1': {
+          id: 'peer:1',
           name: 'wild-racoon',
           color: "#12345"
         }
@@ -34,18 +34,7 @@ class Hypermerge {
       console.log('[hypermerge watch triggered]');
       this.doc = state;
       if (callback) {
-        const newlocalState = {
-          elements: [],
-          peers: []
-        }
-        Object.keys(state.elements).forEach(key => {
-          newlocalState.elements.push(state.elements[key]);
-        });
-        Object.keys(state.peers).forEach(key => {
-          newlocalState.peers.push(state.peers[key]);
-        });
-        console.log(newlocalState);
-        callback(newlocalState);
+        callback(this._mapped(state));
       }
     });
   }
@@ -55,6 +44,45 @@ class Hypermerge {
       handle(state);
     });
   }
+
+  _mapped(state) {
+    /* _mapped: Map hash-based state from crdt into array-based state (for react-flow API) */
+    const _mapToLocalRecursive = (obj) => {
+      /*
+      * _mapToLocalRecursive:
+      * Object in automerge's crdt state is not really a normal javascript object, it saves data related
+      * to it's internal conflict res. mechanism (_conflicts and _objectId), and this internal data will exist for
+      * every object inside the data (no matter how deeply nested the object is). So, we need to map
+      * every object in the crdt state (for every level) into new object that doesn't include this internal data.
+      * Without this recursive method, automerge will throw "multiple parents" error for every update activity.
+      */
+      const res = {};
+      Object.keys(obj).forEach(key => {
+        if (!(obj[key] instanceof Object)) {
+          //Primitive type (string,number,etc) map directly into new object.
+          res[key] = obj[key];
+          return;
+        }
+        // nested object, need to delete crdt's internal state first.
+        const nested = _mapToLocalRecursive(obj[key]);
+        res[key] = nested;
+      })
+      return res;
+    }
+
+    const elements = [];
+    const peers = [];
+    Object.keys(state.elements).forEach(key => {
+      elements.push(_mapToLocalRecursive(state.elements[key]));
+    });
+    Object.keys(state.peers).forEach(key => {
+      peers.push(_mapToLocalRecursive(state.peers[key]));
+    });
+    console.log({elements,peers});
+    return {elements, peers};
+  }
+
+
 
 }
 
@@ -70,8 +98,10 @@ export const useEntityManager = () => {
   const addNewShape = () => {
     const newNode = {
       id: `node:${uuidv4()}`,
+      type: 'default',
       position: {x: 250, y: 250},
-      data: {label: 'New Node'}
+      data: {label: 'New Node'},
+      style: {}
     }
     hypermerge.update(state => {
       state.elements[newNode.id] = newNode;
@@ -95,6 +125,19 @@ export const useEntityManager = () => {
     });
   }
 
+  const updateNode = (event, element) => {
+    console.log('[updateNode]');
+    return hypermerge.update(state => {
+      state.elements[element.id] = element;
+    })
+  }
+
+  const updateEdgeConnection = (oldEdge, newConnection) => {
+    console.log('[updateEdge]');
+    console.log(oldEdge);
+    console.log(newConnection);
+  }
+
   const deleteShape = (elementsToRemove) => {
     // Original react-flow API supports deleting multiple apps at once,
     // but this app only supports one shape per deletion.
@@ -115,6 +158,8 @@ export const useEntityManager = () => {
     addNewShape,
     addNewEdge,
     deleteShape,
+    updateNode,
+    updateEdgeConnection,
     elements: localState.elements
   };
 }

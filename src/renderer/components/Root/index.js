@@ -14,7 +14,7 @@ import ActionButton from "../ActionButton";
 
 function Root() {
 
-  const {elements, addNewShape, deleteShape, addNewEdge} = useEntityManager();
+  const {elements, addNewShape, deleteShape, addNewEdge, updateNode, updateEdgeConnection} = useEntityManager();
 
   return (
     <div className="App">
@@ -23,6 +23,8 @@ function Root() {
           elements={elements}
           handleRemove={deleteShape}
           handleAddEdge={addNewEdge}
+          handleNodeUpdate={updateNode}
+          handleEdgeUpdate={updateEdgeConnection}
         />
         <UrlInput/>
         <ActionButton
