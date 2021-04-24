@@ -3,13 +3,13 @@ import {v4 as uuidv4} from 'uuid';
 import Hypermerge from "./statemanager/Hypermerge";
 
 // Only use on the root component
-export const useEntityManager = () => {
+export const useEntityManager = (withPersistence) => {
 
   const [localState, setLocalState] = useState({
     elements: [],
     peers: []
   });
-  const [hypermerge] = useState(() => new Hypermerge(setLocalState));
+  const [hypermerge] = useState(() => new Hypermerge(setLocalState, withPersistence));
 
 
   const addNewShape = (el) => {
