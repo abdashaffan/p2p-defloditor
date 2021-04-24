@@ -18,8 +18,8 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
         onNodeDragStop={handleNodeUpdate}
         onEdgeUpdate={handleEdgeUpdate}
         onLoad={handleOnLoad}
-        snapToGrid={true}
-        snapGrid={[15, 15]}
+        // snapToGrid={true}
+        // snapGrid={[15, 15]}
       />
   );
 }
