@@ -3,13 +3,15 @@ import {hot} from 'react-hot-loader/root'
 import React from 'react'
 import './index.css'
 import Canvas from "../Canvas";
-import '@/env';
 import UrlInput from "../Input";
 import {useEntityManager} from '../../Hooks';
 import {ReactFlowProvider} from "react-flow-renderer";
-import ActionButton from "../ActionButton";
-import {Col, Container, Row} from "react-bootstrap";
+import {Container, Row} from "react-bootstrap";
+import env from "../../../common/env";
 
+// Save document in user's local in production.
+// const withPersistence = env.isProduction;
+const withPersistence = false;
 
 function Root() {
 
@@ -23,7 +25,7 @@ function Root() {
     updateUrl,
     validateUrl,
     getUrl
-  } = useEntityManager();
+  } = useEntityManager(withPersistence);
 
   return (
     <ReactFlowProvider>
