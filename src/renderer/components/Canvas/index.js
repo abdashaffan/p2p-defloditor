@@ -7,7 +7,7 @@ import ActionButton from "../ActionButton";
 
 
 // eslint-disable-next-line react/prop-types
-function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handleEdgeUpdate, handleAddNode, handleNodeStyleChange}) {
+function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handleEdgeUpdate, handleAddNode}) {
 
   // Differentiate between active and copy shape so the copied shape doesn't
   // change every time user clicks a different shape.
@@ -20,30 +20,12 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
   const handleOnLoad = (reactFlowInstance) => {
     reactFlowInstance.fitView();
   }
-
-  // "Hacky" (ugly) solution to solve useState async update...
   const handleColorFillChange = (color, event) => {
-    handleNodeUpdate(null, {
-      ...activeEntity,
-      style: {
-        backgroundColor: color.hex,
-        borderColor: borderColor
-      }
-    });
     setColorFill(color.hex);
   }
   const handleColorBorderChange = (color, event) => {
-    handleNodeUpdate(null, {
-      ...activeEntity,
-      style: {
-        backgroundColor: colorFill,
-        borderColor: color.hex
-      }
-    });
     setBorderColor(color.hex);
   }
-
-
   const handleSelectionChange = (listOfClickedElement) => {
     if (listOfClickedElement && listOfClickedElement.length > 0) {
       // Original react-flow API supports multiple selection,
