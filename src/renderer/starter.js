@@ -1,14 +1,16 @@
 export const initialElements = {
-  1: {
-    id: '1',
+  'node:1': {
+    id: 'node:1',
     type: 'input', // input node
     data: {label: 'Welcome to defloditor'},
     position: {x: 250, y: 25},
     style: {borderColor: 'green'}
   },
-  2: {
-    id: '2',
+  'node:2': {
+    id: 'node:2',
+    type: 'default',
     data: {label: 'A P2P flowchart editor'},
     position: {x: 100, y: 125},
+    style: {}
   }
 }
