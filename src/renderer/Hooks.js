@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import {v4 as uuidv4} from 'uuid';
 import {Repo} from 'hypermerge';
 import Hyperswarm from 'hyperswarm';
+import {starterElements} from "./starter";
 
 // Idea: Simpen class Hypermerge di dalem context, panggil disini
 // Only use on the root component
@@ -12,8 +13,9 @@ class Hypermerge {
     this.swarm = Hyperswarm({queue: {multiplex: true}});
     this.repo = new Repo({memory: true});
     this.repo.addSwarm(this.swarm, {announce: true});
+    // TODO: Implement peer mechanism
     this.url = this.repo.create({
-      elements: [],
+      elements: starterElements,
       peers: []
     });
     this.doc = null;
