@@ -28,6 +28,8 @@ class Hypermerge {
       console.log('[hypermerge watch triggered]');
       this.doc = state;
       if (callback) {
+        console.log('new state:');
+        console.log(state);
         callback(state);
       }
     });
@@ -61,6 +63,26 @@ export const useEntityManager = () => {
     });
   }
 
+  const addNewEdge = (params) => {
+    const srcId = params.source;
+    const targetId = params.target;
+
+    return hypermerge.update(state => {
+      const srcNode = state.elements.find(el => el.id === srcId);
+      const targetNode = state.elements.find(el => el.id === targetId);
+      // Only add edge if the source and the target node are still exist.
+      if (srcNode && targetNode) {
+        const newEdge = {
+          id: `edge:${uuidv4()}`,
+          source: srcId,
+          target: targetId
+        }
+        state.elements.push(newEdge);
+      }
+    });
+
+  }
+
   const deleteShape = (elementsToRemove) => {
     // Original react-flow API supports deleting multiple apps at once,
     // but this app only supports one shape per deletion.
@@ -81,6 +103,7 @@ export const useEntityManager = () => {
 
   return {
     addNewShape,
+    addNewEdge,
     deleteShape,
     elements: localState.elements
   };
