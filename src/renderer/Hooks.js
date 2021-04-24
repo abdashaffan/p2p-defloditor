@@ -89,14 +89,26 @@ export const useEntityManager = () => {
     const idToBeRemoved = elementsToRemove[0].id;
     // Need to do it like this, using built-in array.filter() API will cause error on the automerge side.
     return hypermerge.update(state => {
-      let deleteIdx = -1;
+      let deleteNodeIdx = -1;
+      let deleteEdgeIdxList = [];
       for (let i = 0; i < state.elements.length; i++) {
+        // Search elements to be deleted.
         if (state.elements[i].id === idToBeRemoved) {
-          deleteIdx = i;
+          deleteNodeIdx = i;
           break;
         }
       }
-      delete state.elements[deleteIdx];
+      delete state.elements[deleteNodeIdx];
+
+      for (let i = 0; i < state.elements.length; i++) {
+        // And also search all edges that directly connected to also be deleted.
+        if (state.elements[i].source == idToBeRemoved || state.elements[i].target == idToBeRemoved) {
+          deleteEdgeIdxList.push(i);
+        }
+      }
+      deleteEdgeIdxList.forEach(idx => {
+        delete state.elements[idx];
+      })
     });
   }
 
