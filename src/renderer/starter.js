@@ -1,7 +1,7 @@
 export const initialElements = {
   'node:1': {
     id: 'node:1',
-    type: 'input', // input node
+    type: 'default',
     data: {label: 'Welcome to defloditor'},
     position: {x: 250, y: 25},
     style: {borderColor: 'green'}

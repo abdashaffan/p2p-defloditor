@@ -6,7 +6,7 @@ const UrlInput = () => {
   const [input, setInput] = useState("");
 
   return (
-    <InputGroup className="mb-3">
+    <InputGroup className="mt-3 mb-3">
       <FormControl
         placeholder="Join Workspace"
         aria-label="Join Workspace url input"
