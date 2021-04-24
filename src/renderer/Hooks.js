@@ -54,8 +54,9 @@ class Hypermerge {
     }
   }
 
-  updateWorkspace(url) {
-    console.log("[updateWorkspace] TODO, TBD");
+  updateWorkspace(url,callback) {
+    this.url = url;
+    this.watch(callback);
   }
 
 
@@ -181,7 +182,7 @@ export const useEntityManager = () => {
 
   const updateUrl = (url) => {
     // Precondition: valid workspace url
-    return hypermerge.updateWorkspace(url);
+    return hypermerge.updateWorkspace(url,setLocalState);
   }
 
 
