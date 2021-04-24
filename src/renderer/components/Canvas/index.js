@@ -7,26 +7,42 @@ import ActionButton from "../ActionButton";
 
 
 // eslint-disable-next-line react/prop-types
-function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handleEdgeUpdate, handleAddNode}) {
+function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handleEdgeUpdate, handleAddNode, handleNodeStyleChange}) {
 
   // Differentiate between active and copy shape so the copied shape doesn't
   // change every time user clicks a different shape.
   const [activeEntity, setActiveEntity] = useState(null);
   const [copiedEntityRef, setCopiedEntityRef] = useState(null);
   const [colorFill, setColorFill] = useState("#fff");
-  const [colorBorder, setColorBorder] = useState("#000");
+  const [borderColor, setBorderColor] = useState("#000");
 
 
   const handleOnLoad = (reactFlowInstance) => {
     reactFlowInstance.fitView();
   }
 
+  // "Hacky" (ugly) solution to solve useState async update...
   const handleColorFillChange = (color, event) => {
+    handleNodeUpdate(null, {
+      ...activeEntity,
+      style: {
+        backgroundColor: color.hex,
+        borderColor: borderColor
+      }
+    });
     setColorFill(color.hex);
   }
   const handleColorBorderChange = (color, event) => {
-    setColorBorder(color.hex);
+    handleNodeUpdate(null, {
+      ...activeEntity,
+      style: {
+        backgroundColor: colorFill,
+        borderColor: color.hex
+      }
+    });
+    setBorderColor(color.hex);
   }
+
 
   const handleSelectionChange = (listOfClickedElement) => {
     if (listOfClickedElement && listOfClickedElement.length > 0) {
@@ -110,7 +126,7 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
           <h5 className="m-2">Set Color Fill</h5>
         </Col>
         <Col className="toolkit">
-          <CompactPicker onChangeComplete={handleColorBorderChange} color={colorBorder}/>
+          <CompactPicker onChangeComplete={handleColorBorderChange} color={borderColor}/>
           <h5 className="m-2">Set Border Color</h5>
         </Col>
       </Row>
@@ -120,6 +136,7 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
           onConnect={handleAddEdge}
           onElementsRemove={handleRemove}
           onNodeDragStop={handleNodeUpdate}
+          onNodeMouseLeave={(event,node) => handleSelectionChange([node])}
           onEdgeUpdate={handleEdgeUpdate}
           onLoad={handleOnLoad}
           onSelectionChange={handleSelectionChange}
