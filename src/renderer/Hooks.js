@@ -95,13 +95,22 @@ export const useEntityManager = () => {
   const [hypermerge] = useState(() => new Hypermerge(setLocalState));
 
 
-  const addNewShape = () => {
-    const newNode = {
-      id: `node:${uuidv4()}`,
-      type: 'default',
-      position: {x: 250, y: 250},
-      data: {label: 'New Node'},
-      style: {}
+  const addNewShape = (el) => {
+    let newNode;
+    if (el) {
+      newNode = {
+        ...el,
+        id: `node:${uuidv4()}`,
+        position: {x: el.position.x, y: el.position.y + 50}
+      }
+    } else {
+      newNode = {
+        id: `node:${uuidv4()}`,
+        type: 'default',
+        position: {x: 250, y: 250},
+        data: {label: 'New Node'},
+        style: {}
+      }
     }
     hypermerge.update(state => {
       state.elements[newNode.id] = newNode;
@@ -141,6 +150,7 @@ export const useEntityManager = () => {
   }
 
   const deleteShape = (elementsToRemove) => {
+    // TODO: Change method name
     // Original react-flow API supports deleting multiple apps at once,
     // but this app only supports one shape per deletion.
     const idToBeRemoved = elementsToRemove[0].id;

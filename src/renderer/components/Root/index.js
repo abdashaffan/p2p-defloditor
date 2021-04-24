@@ -25,6 +25,7 @@ function Root() {
           handleAddEdge={addNewEdge}
           handleNodeUpdate={updateNode}
           handleEdgeUpdate={updateEdgeConnection}
+          handleAddNode={addNewShape}
         />
         <UrlInput/>
         <ActionButton

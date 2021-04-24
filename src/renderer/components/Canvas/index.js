@@ -1,12 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import ReactFlow from "react-flow-renderer";
-
+import {isANode} from "../../utils";
 
 
 // eslint-disable-next-line react/prop-types
-function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handleEdgeUpdate}) {
+function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handleEdgeUpdate, handleAddNode}) {
 
+  // Differentiate between active and copy shape so the copied shape doesn't
+  // change every time user clicks a different shape.
   const [activeEntity, setActiveEntity] = useState(null);
+  const [copiedEntityRef, setCopiedEntityRef] = useState(null);
+
 
   const handleOnLoad = (reactFlowInstance) => {
     reactFlowInstance.fitView();
@@ -16,35 +20,35 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
     if (listOfClickedElement && listOfClickedElement.length > 0) {
       // Original react-flow API supports multiple selection,
       // but this app only supports one selection.
-      const activeEntity = listOfClickedElement[0];
+      const firstActiveEntity = listOfClickedElement[0];
       // eslint-disable-next-line react/prop-types
-      const isStillExist = elements.find(el => el.id === activeEntity.id);
+      const isStillExist = elements.find(el => el.id === firstActiveEntity.id);
       if (isStillExist) {
-        setActiveEntity(activeEntity);
-      } else {
-        setActiveEntity(null);
+        setActiveEntity(firstActiveEntity);
+        return;
       }
-      return;
     }
-    // Set active entity to null.
     setActiveEntity(null);
   }
 
   const handleCopy = () => {
-    console.log('[copy]');
+    if (isANode(activeEntity)) {
+      setCopiedEntityRef(activeEntity);
+    }
   }
 
   const handleCut = () => {
-    console.log('[cut]');
+    if (isANode(activeEntity)) {
+      setCopiedEntityRef(activeEntity);
+      handleRemove([activeEntity]);
+    }
   }
 
   const handlePaste = () => {
-    console.log('[paste]');
+    if (isANode(copiedEntityRef)) {
+      handleAddNode(copiedEntityRef);
+    }
   }
-
-  useEffect(() => {
-    console.log(`active entity: ${activeEntity && activeEntity.id}`);
-  });
 
   useEffect(() => {
 
@@ -54,7 +58,7 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
       'V': 'v'
     }
 
-    const  handleClick = (event) => {
+    const handleClick = (event) => {
       if (event.ctrlKey) {
         switch (event.key) {
           case keyboard.C:
@@ -77,20 +81,20 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
     return () => {
       window.removeEventListener('keydown', handleClick);
     };
-  }, []);
+  });
 
   return (
-      <ReactFlow
-        elements={elements}
-        onConnect={handleAddEdge}
-        onElementsRemove={handleRemove}
-        onNodeDragStop={handleNodeUpdate}
-        onEdgeUpdate={handleEdgeUpdate}
-        onLoad={handleOnLoad}
-        onSelectionChange={handleSelectionChange}
-        // snapToGrid={true}
-        // snapGrid={[15, 15]}
-      />
+    <ReactFlow
+      elements={elements}
+      onConnect={handleAddEdge}
+      onElementsRemove={handleRemove}
+      onNodeDragStop={handleNodeUpdate}
+      onEdgeUpdate={handleEdgeUpdate}
+      onLoad={handleOnLoad}
+      onSelectionChange={handleSelectionChange}
+      // snapToGrid={true}
+      // snapGrid={[15, 15]}
+    />
   );
 }
 

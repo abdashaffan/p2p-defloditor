@@ -18,3 +18,13 @@ export const generateId = (entity) => {
       throw new Error("Invalid entity type input for this Id generator");
   }
 }
+
+export const isAnEdge = (el) => {
+  if (!el) return false;
+  return el.id.startsWith('edge');
+}
+
+export const isANode = (el) => {
+  if (!el) return false;
+  return el.id.startsWith('node');
+}
