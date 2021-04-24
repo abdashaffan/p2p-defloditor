@@ -165,6 +165,14 @@ export const useEntityManager = () => {
     });
   }
 
+  const validateUrl = () => {
+    return true;
+  }
+
+  const updateUrl = (url) => {
+    console.log(`update url to ${url}`);
+  }
+
 
   return {
     addNewShape,
@@ -172,6 +180,8 @@ export const useEntityManager = () => {
     deleteShape,
     updateNode,
     updateEdgeConnection,
+    updateUrl,
+    validateUrl,
     elements: localState.elements
   };
 }

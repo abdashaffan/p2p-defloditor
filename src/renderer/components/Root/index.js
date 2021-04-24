@@ -15,13 +15,22 @@ import {Container, Row} from "react-bootstrap";
 
 function Root() {
 
-  const {elements, addNewShape, deleteShape, addNewEdge, updateNode, updateEdgeConnection} = useEntityManager();
+  const {
+    elements,
+    addNewShape,
+    deleteShape,
+    addNewEdge,
+    updateNode,
+    updateEdgeConnection,
+    updateUrl,
+    validateUrl
+  } = useEntityManager();
 
   return (
     <ReactFlowProvider>
       <Container>
         <Row>
-          <UrlInput/>
+          <UrlInput handleUrlUpdate={updateUrl} validateUrl={validateUrl}/>
           <ActionButton
             variant="primary"
             handleClick={addNewShape}
