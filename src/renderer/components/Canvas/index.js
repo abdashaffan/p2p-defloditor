@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import ReactFlow from "react-flow-renderer";
 import {isANode} from "../../utils";
+import {Row} from "react-bootstrap";
+import {CompactPicker} from "react-color";
 
 
 // eslint-disable-next-line react/prop-types
@@ -84,17 +86,20 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
   });
 
   return (
-    <ReactFlow
-      elements={elements}
-      onConnect={handleAddEdge}
-      onElementsRemove={handleRemove}
-      onNodeDragStop={handleNodeUpdate}
-      onEdgeUpdate={handleEdgeUpdate}
-      onLoad={handleOnLoad}
-      onSelectionChange={handleSelectionChange}
-      // snapToGrid={true}
-      // snapGrid={[15, 15]}
-    />
+    <>
+      <Row><CompactPicker /></Row>
+      <Row className="canvas-wrapper">
+        <ReactFlow
+          elements={elements}
+          onConnect={handleAddEdge}
+          onElementsRemove={handleRemove}
+          onNodeDragStop={handleNodeUpdate}
+          onEdgeUpdate={handleEdgeUpdate}
+          onLoad={handleOnLoad}
+          onSelectionChange={handleSelectionChange}
+        />
+      </Row>
+    </>
   );
 }
 

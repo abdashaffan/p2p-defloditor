@@ -1,6 +1,6 @@
 {
   "commonSourceDirectory": "src/common",
-  "whiteListedModules": ["react-hot-loader", "react-flow-renderer", "bootstrap", "react-bootstrap"],
+  "whiteListedModules": ["react-hot-loader", "react-flow-renderer", "bootstrap", "react-bootstrap", "react-color"],
   "renderer": {
     "webpackConfig": "webpack.renderer.js"
   }

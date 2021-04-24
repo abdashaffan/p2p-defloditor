@@ -4,5 +4,15 @@
   border: 5px solid #eee;
   text-align: center;
   font-size: calc(10px + 2vmin);
+  height: 725px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.canvas-wrapper {
   height: 600px;
+  width: 100%;
+  background-color: white;
 }
