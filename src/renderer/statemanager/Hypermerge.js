@@ -2,12 +2,15 @@ import Hyperswarm from "hyperswarm";
 import {Repo} from "hypermerge";
 import {initialElements} from "../starter";
 import {validateDocURL} from "hypermerge/dist/Metadata";
+import env from "../../common/env";
+import * as fs from "fs";
 
 export default class Hypermerge {
 
-  constructor(callback) {
+  constructor(callback, withPersistence) {
+    this.withPersistence = withPersistence;
     this.swarm = Hyperswarm({queue: {multiplex: true}});
-    this.repo = new Repo({memory: true});
+    this.repo = withPersistence ? new Repo({path: env.HYPERMERGE_PATH}) : new Repo({memory: true});
     this.repo.addSwarm(this.swarm, {announce: true});
     // TODO: Implement peer mechanism
     this.url = this.repo.create({
@@ -21,8 +24,14 @@ export default class Hypermerge {
       }
     });
     this.doc = null;
-    this.watch(callback);
+    const lastWorkspaceUrl = this._loadUrl();
+    if (lastWorkspaceUrl) {
+      this.updateWorkspace(lastWorkspaceUrl,callback);
+    } else {
+      this.watch(callback);
+    }
     console.log("workspace url: ", this.url);
+    this._saveUrl();
   }
 
   watch(callback) {
@@ -50,13 +59,30 @@ export default class Hypermerge {
     }
   }
 
-  updateWorkspace(url,callback) {
+  updateWorkspace(url, callback) {
     this.url = url;
     this.watch(callback);
   }
 
   getUrl() {
     return this.url;
+  }
+
+  _saveUrl() {
+    if (this.withPersistence) {
+      const data = {url: this.url};
+      fs.writeFileSync(env.LAST_WORKSPACE_URL_PATH, JSON.stringify(data));
+    }
+  }
+
+  _loadUrl() {
+    if (this.withPersistence) {
+      if (fs.existsSync(env.LAST_WORKSPACE_URL_PATH)) {
+        const json = JSON.parse(fs.readFileSync(env.LAST_WORKSPACE_URL_PATH, {encoding: 'utf-8'}));
+        return json.url;
+      }
+    }
+    return null;
   }
 
   _mapped(state) {
@@ -92,7 +118,7 @@ export default class Hypermerge {
     Object.keys(state.peers).forEach(key => {
       peers.push(_mapToLocalRecursive(state.peers[key]));
     });
-    console.log("updated local state: ",{elements,peers});
+    console.log("updated local state: ", {elements, peers});
     return {elements, peers};
   }
 }
