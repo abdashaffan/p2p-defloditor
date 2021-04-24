@@ -1,5 +1,3 @@
-/// <reference types="hypermerge/src/types/hyperswarm" />
-
 import {hot} from 'react-hot-loader/root'
 
 import React from 'react'
@@ -10,7 +8,7 @@ import UrlInput from "../Input";
 import {useEntityManager} from '../../Hooks';
 import {ReactFlowProvider} from "react-flow-renderer";
 import ActionButton from "../ActionButton";
-import {Container, Row} from "react-bootstrap";
+import {Col, Container, Row} from "react-bootstrap";
 
 
 function Root() {
@@ -23,7 +21,8 @@ function Root() {
     updateNode,
     updateEdgeConnection,
     updateUrl,
-    validateUrl
+    validateUrl,
+    getUrl
   } = useEntityManager();
 
   return (
@@ -36,6 +35,9 @@ function Root() {
             handleClick={addNewShape}
             label="Add New Shape"
           />
+        </Row>
+        <Row>
+          <Col>Current url: <p><b>{getUrl()}</b></p></Col>
         </Row>
         <Row className="canvas-container">
           <Canvas

@@ -90,6 +90,8 @@ export const useEntityManager = () => {
     return hypermerge.updateWorkspace(url,setLocalState);
   }
 
+  const getUrl = () => hypermerge.getUrl();
+
 
   return {
     addNewShape,
@@ -99,6 +101,7 @@ export const useEntityManager = () => {
     updateEdgeConnection,
     updateUrl,
     validateUrl,
+    getUrl,
     elements: localState.elements
   };
 }

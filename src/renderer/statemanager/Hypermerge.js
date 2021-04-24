@@ -55,6 +55,9 @@ export default class Hypermerge {
     this.watch(callback);
   }
 
+  getUrl() {
+    return this.url;
+  }
 
   _mapped(state) {
     /* _mapped: Map hash-based state from crdt into array-based state (for react-flow API) */
