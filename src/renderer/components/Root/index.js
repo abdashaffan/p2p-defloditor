@@ -28,7 +28,7 @@ function Root() {
   return (
     <ReactFlowProvider>
       <Container>
-        <Row>
+        <Row className="mt-3 mb-3">
           <UrlInput handleUrlUpdate={updateUrl} validateUrl={validateUrl}/>
           <ActionButton
             variant="primary"
@@ -36,8 +36,8 @@ function Root() {
             label="Add New Shape"
           />
         </Row>
-        <Row>
-          <Col>Current url: <p><b>{getUrl()}</b></p></Col>
+        <Row className="mt-3 mb-3">
+          Current url: <p><b>{getUrl()}</b></p>
         </Row>
         <Row className="canvas-container">
           <Canvas
