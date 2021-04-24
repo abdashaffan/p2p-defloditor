@@ -9,9 +9,9 @@ const UrlInput = ({handleUrlUpdate, validateUrl}) => {
 
   const onUrlSubmit = () => {
     console.log(`validate: ${validateUrl(input)}`);
-    if (validateUrl(input)) {
-      setError(false);
+    if (!error) {
       handleUrlUpdate(input);
+      setInput("");
       return;
     }
     setError(true);
@@ -22,7 +22,6 @@ const UrlInput = ({handleUrlUpdate, validateUrl}) => {
   }
 
   useEffect(() => {
-    console.log(`input: ${input}`);
     setError(!validateUrl(input));
   });
 
@@ -37,7 +36,12 @@ const UrlInput = ({handleUrlUpdate, validateUrl}) => {
         isValid={!error}
       />
       <InputGroup.Append>
-        <Button variant={error? 'danger' : 'success'} onClick={onUrlSubmit}>Join Room</Button>
+        <Button
+          variant={error? 'outline-secondary' : 'success'}
+          onClick={onUrlSubmit}
+          disabled={error}>
+          Join Room
+        </Button>
       </InputGroup.Append>
     </InputGroup>
   )

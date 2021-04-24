@@ -1,10 +1,10 @@
-import React, {useState} from "react";
+import React, {useCallback, useState} from "react";
 import {v4 as uuidv4} from 'uuid';
 import {Repo} from 'hypermerge';
 import Hyperswarm from 'hyperswarm';
+import {validateDocURL} from "hypermerge/dist/Metadata";
 import {initialElements} from "./starter";
 
-// Idea: Simpen class Hypermerge di dalem context, panggil disini
 // Only use on the root component
 
 class Hypermerge {
@@ -45,6 +45,20 @@ class Hypermerge {
     });
   }
 
+  validateWorkspace(url) {
+    try {
+      validateDocURL(url);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  updateWorkspace(url) {
+    console.log("[updateWorkspace] TODO, TBD");
+  }
+
+
   _mapped(state) {
     /* _mapped: Map hash-based state from crdt into array-based state (for react-flow API) */
     const _mapToLocalRecursive = (obj) => {
@@ -81,9 +95,6 @@ class Hypermerge {
     console.log("updated local state: ",{elements,peers});
     return {elements, peers};
   }
-
-
-
 }
 
 export const useEntityManager = () => {
@@ -150,7 +161,6 @@ export const useEntityManager = () => {
   }
 
   const deleteShape = (elementsToRemove) => {
-    // TODO: Change method name
     // Original react-flow API supports deleting multiple apps at once,
     // but this app only supports one shape per deletion.
     const idToBeRemoved = elementsToRemove[0].id;
@@ -165,12 +175,13 @@ export const useEntityManager = () => {
     });
   }
 
-  const validateUrl = () => {
-    return true;
+  const validateUrl = (url) => {
+    return hypermerge.validateWorkspace(url);
   }
 
   const updateUrl = (url) => {
-    console.log(`update url to ${url}`);
+    // Precondition: valid workspace url
+    return hypermerge.updateWorkspace(url);
   }
 
 
