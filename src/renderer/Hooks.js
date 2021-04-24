@@ -78,7 +78,7 @@ class Hypermerge {
     Object.keys(state.peers).forEach(key => {
       peers.push(_mapToLocalRecursive(state.peers[key]));
     });
-    console.log({elements,peers});
+    console.log("updated local state: ",{elements,peers});
     return {elements, peers};
   }
 
@@ -126,16 +126,18 @@ export const useEntityManager = () => {
   }
 
   const updateNode = (event, element) => {
-    console.log('[updateNode]');
     return hypermerge.update(state => {
       state.elements[element.id] = element;
     })
   }
 
   const updateEdgeConnection = (oldEdge, newConnection) => {
-    console.log('[updateEdge]');
-    console.log(oldEdge);
-    console.log(newConnection);
+    return hypermerge.update(state => {
+      if (state.elements[newConnection.source] && state.elements[newConnection.target]) {
+        state.elements[oldEdge.id].source = newConnection.source;
+        state.elements[oldEdge.id].target = newConnection.target;
+      }
+    });
   }
 
   const deleteShape = (elementsToRemove) => {
