@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import ReactFlow from "react-flow-renderer";
 import {isANode} from "../../utils";
-import {Row} from "react-bootstrap";
+import {Col, Row} from "react-bootstrap";
 import {CompactPicker} from "react-color";
+import ActionButton from "../ActionButton";
 
 
 // eslint-disable-next-line react/prop-types
@@ -12,10 +13,19 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
   // change every time user clicks a different shape.
   const [activeEntity, setActiveEntity] = useState(null);
   const [copiedEntityRef, setCopiedEntityRef] = useState(null);
+  const [colorFill, setColorFill] = useState("#fff");
+  const [colorBorder, setColorBorder] = useState("#000");
 
 
   const handleOnLoad = (reactFlowInstance) => {
     reactFlowInstance.fitView();
+  }
+
+  const handleColorFillChange = (color, event) => {
+    setColorFill(color.hex);
+  }
+  const handleColorBorderChange = (color, event) => {
+    setColorBorder(color.hex);
   }
 
   const handleSelectionChange = (listOfClickedElement) => {
@@ -87,7 +97,23 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
 
   return (
     <>
-      <Row><CompactPicker /></Row>
+      <Row style={{alignItems:'center'}} className="mb-4">
+        <Col>
+          <ActionButton
+            variant="primary"
+            handleClick={handleAddNode}
+            label="Add New Shape"
+          />
+        </Col>
+        <Col className="toolkit">
+          <CompactPicker onChangeComplete={handleColorFillChange} color={colorFill}/>
+          <h5 className="m-2">Set Color Fill</h5>
+        </Col>
+        <Col className="toolkit">
+          <CompactPicker onChangeComplete={handleColorBorderChange} color={colorBorder}/>
+          <h5 className="m-2">Set Border Color</h5>
+        </Col>
+      </Row>
       <Row className="canvas-wrapper">
         <ReactFlow
           elements={elements}

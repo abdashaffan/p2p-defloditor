@@ -30,11 +30,6 @@ function Root() {
       <Container>
         <Row className="mt-3 mb-3">
           <UrlInput handleUrlUpdate={updateUrl} validateUrl={validateUrl}/>
-          <ActionButton
-            variant="primary"
-            handleClick={addNewShape}
-            label="Add New Shape"
-          />
         </Row>
         <Row className="mt-3 mb-3">
           Current url: <p><b>{getUrl()}</b></p>
