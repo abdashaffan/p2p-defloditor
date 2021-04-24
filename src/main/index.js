@@ -1,9 +1,10 @@
 'use strict'
 import env from 'common/env'
-import { app, BrowserWindow } from 'electron'
+import {app, BrowserWindow} from 'electron'
 import * as path from 'path'
-import { format as formatUrl } from 'url'
+import {format as formatUrl} from 'url'
 import initDevTools from './dev/initDevTools'
+import installExtension, {REACT_DEVELOPER_TOOLS} from 'electron-devtools-installer';
 
 // global reference to mainWindow (necessary to prevent window from being garbage collected)
 let mainWindow
@@ -12,7 +13,7 @@ function createMainWindow() {
   const window = new BrowserWindow({
     width: 1000,
     height: 1500,
-    webPreferences: { nodeIntegration: true,contextIsolation:false }
+    webPreferences: {nodeIntegration: true, contextIsolation: false}
   })
 
   let url
@@ -29,7 +30,7 @@ function createMainWindow() {
   }
 
   window.on('error', error => {
-    console.error({ error })
+    console.error({error})
   })
   window.on('closed', () => {
     mainWindow = null
@@ -59,6 +60,12 @@ app.on('activate', () => {
 app.on('ready', () => {
   mainWindow = createMainWindow()
 })
+
+app.whenReady().then(() => {
+  installExtension(REACT_DEVELOPER_TOOLS)
+    .then((name) => console.log(`Added Extension:  ${name}`))
+    .catch((err) => console.log('An error occurred: ', err));
+});
 
 if (module.hot) {
   module.hot.accept()
