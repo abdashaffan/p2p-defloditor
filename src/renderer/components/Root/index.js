@@ -8,6 +8,7 @@ import {useEntityManager} from '../../Hooks';
 import {ReactFlowProvider} from "react-flow-renderer";
 import {Container, Row} from "react-bootstrap";
 import env from "../../../common/env";
+import CustomAvatarGroup from "../AvatarGroup";
 
 // Save document in user's local in production.
 // const withPersistence = env.isProduction;
@@ -17,6 +18,7 @@ function Root() {
 
   const {
     elements,
+    peers,
     addNewShape,
     deleteShape,
     addNewEdge,
@@ -29,14 +31,20 @@ function Root() {
 
   return (
     <ReactFlowProvider>
-      <Container>
-        <Row className="mt-3 mb-3">
+      <Container className="root">
+        <Row className="mt-5"><h2>Basic Flowchart editor</h2></Row>
+        <Row className="mt-3">
           <UrlInput handleUrlUpdate={updateUrl} validateUrl={validateUrl}/>
         </Row>
-        <Row className="mt-3 mb-3">
-          Current url: <p><b>{getUrl()}</b></p>
+        <Row className="mt-3">
+          <h5>Current Workspace Url:</h5>
         </Row>
-        <Row className="canvas-container">
+        <Row><p><b>{getUrl()}</b></p></Row>
+        <Row className="mt-3"><h5>Users in this document: {peers.length}</h5></Row>
+        <Row>
+          <CustomAvatarGroup peers={peers}/>
+        </Row>
+        <Row className="canvas-container mt-5 mb-5">
           <Canvas
             elements={elements}
             handleRemove={deleteShape}

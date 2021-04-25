@@ -4,6 +4,7 @@ import {initialElements} from "../starter";
 import {validateDocURL} from "hypermerge/dist/Metadata";
 import env from "../../common/env";
 import * as fs from "fs";
+import {getAnonymousIdentifier, getRandomColor} from "../utils";
 
 export default class Hypermerge {
 
@@ -12,26 +13,22 @@ export default class Hypermerge {
     this.swarm = Hyperswarm({queue: {multiplex: true}});
     this.repo = withPersistence ? new Repo({path: env.HYPERMERGE_PATH}) : new Repo({memory: true});
     this.repo.addSwarm(this.swarm, {announce: true});
-    // TODO: Implement peer mechanism
     this.url = this.repo.create({
       elements: initialElements,
-      peers: {
-        'peer:1': {
-          id: 'peer:1',
-          name: 'wild-racoon',
-          color: "#12345"
-        }
-      }
+      peers: {}
     });
+    this.user = this._createUser();
+    this._addSelfIntoPeerList();
     this.doc = null;
     const lastWorkspaceUrl = this._loadUrl();
     if (lastWorkspaceUrl) {
-      this.updateWorkspace(lastWorkspaceUrl,callback);
+      this.updateWorkspace(lastWorkspaceUrl, callback);
     } else {
       this.watch(callback);
     }
     console.log("workspace url: ", this.url);
     this._saveUrl();
+    this._watchPeerConnection();
   }
 
   watch(callback) {
@@ -61,11 +58,22 @@ export default class Hypermerge {
 
   updateWorkspace(url, callback) {
     this.url = url;
+    // might be changed for every workspace reload, so reassign the id just in case.
+    this.user.selfId = this._getSelfId();
     this.watch(callback);
+    this._addSelfIntoPeerList();
+    this._saveUrl();
   }
 
   getUrl() {
     return this.url;
+  }
+
+  _addSelfIntoPeerList() {
+    this.update(state => {
+      console.log('[add self into peer list]');
+      state.peers[this.user.selfId] = this.user;
+    });
   }
 
   _saveUrl() {
@@ -84,6 +92,40 @@ export default class Hypermerge {
     }
     return null;
   }
+
+  _createUser() {
+    return {
+      name: getAnonymousIdentifier(),
+      color: getRandomColor(),
+      selfId: this._getSelfId()
+    };
+  }
+
+  _getSelfId() {
+    return this.repo.back.network.selfId;
+  }
+
+  _watchPeerConnection() {
+    this.swarm.on('disconnection', (socket, info) => {
+      const connectedPeers = this._getPeers();
+      const deletePeersId = [];
+      connectedPeers.forEach((value, key, map) => {
+        if (!value.isConnected) {
+          deletePeersId.push(key);
+        }
+      })
+      this.update(state => {
+        deletePeersId.forEach(key => {
+          delete state.peers[key];
+        })
+      })
+    })
+  }
+
+  _getPeers() {
+    return this.repo.back.network.peers;
+  }
+
 
   _mapped(state) {
     /* _mapped: Map hash-based state from crdt into array-based state (for react-flow API) */
@@ -118,7 +160,7 @@ export default class Hypermerge {
     Object.keys(state.peers).forEach(key => {
       peers.push(_mapToLocalRecursive(state.peers[key]));
     });
-    console.log("updated local state: ", elements);
+    console.log("updated local state: ", peers);
     return {elements, peers};
   }
 }

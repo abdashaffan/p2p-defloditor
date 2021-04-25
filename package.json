@@ -10,6 +10,8 @@
     "postinstall": "npm rebuild --runtime=electron \"--target=$(electron -v)\" \"--abi=$(electron --abi)\" --disturl=https://atom.io/download/atom-shell --scripts-prepend-node-path"
   },
   "dependencies": {
+    "@material-ui/core": "^4.11.3",
+    "@material-ui/lab": "^4.0.0-alpha.57",
     "bootstrap": "^4.6.0",
     "dotenv": "^8.0.0",
     "hypermerge": "github:automerge/hypermerge",
@@ -22,6 +24,7 @@
     "react-flow-renderer": "^9.5.1",
     "react-hot-loader": "^4.8.3",
     "source-map-support": "^0.5.12",
+    "unique-names-generator": "^4.4.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

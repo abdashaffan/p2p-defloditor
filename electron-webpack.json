@@ -1,6 +1,14 @@
 {
   "commonSourceDirectory": "src/common",
-  "whiteListedModules": ["react-hot-loader", "react-flow-renderer", "bootstrap", "react-bootstrap", "react-color"],
+  "whiteListedModules": [
+    "react-hot-loader",
+    "react-flow-renderer",
+    "bootstrap",
+    "react-bootstrap",
+    "react-color",
+    "@material-ui/core",
+    "@material-ui/lab"
+  ],
   "renderer": {
     "webpackConfig": "webpack.renderer.js"
   }

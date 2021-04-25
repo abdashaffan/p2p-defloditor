@@ -1,6 +1,12 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
 .canvas-container {
-  margin: 2rem;
-  width: 800px;
+  width: 700px;
 }
 
 .canvas-wrapper {
@@ -10,7 +16,7 @@
   border: 5px solid #eee;
   text-align: center;
   font-size: calc(10px + 2vmin);
-  height: 725px;
+  height: 500px;
 }
 
 .toolkit {

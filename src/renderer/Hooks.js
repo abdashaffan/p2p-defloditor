@@ -101,6 +101,7 @@ export const useEntityManager = (withPersistence) => {
     updateUrl,
     validateUrl,
     getUrl,
-    elements: localState.elements
+    elements: localState.elements,
+    peers: localState.peers
   };
 }
