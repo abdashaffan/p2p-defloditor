@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "electron-webpack dev",
-    "y-webrtc-signal": "y-webrtc-signaling",
+    "signal": "y-webrtc-signaling",
     "compile": "electron-webpack",
     "dist": "yarn compile && electron-builder",
     "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null",
