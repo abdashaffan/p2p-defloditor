@@ -13,7 +13,9 @@ const app = electron.app || electron.remote.app
 export const DATA_PATH = app.getPath('userData')
 export const USER_PATH = Path.join(DATA_PATH, 'p2p-defloditor-react', USER)
 export const HYPERMERGE_PATH = Path.join(USER_PATH, 'hypermerge')
-export const LAST_WORKSPACE_URL_PATH = Path.join(HYPERMERGE_PATH, 'url.json');
+export const YMERGE_PATH = Path.join(USER_PATH, 'ymerge')
+export const LAST_WORKSPACE_URL_PATH_HYPERMERGE = Path.join(HYPERMERGE_PATH, 'url.json');
+export const LAST_WORKSPACE_URL_PATH_YMERGE = Path.join(YMERGE_PATH, 'url.json');
 
 export default {
   // ...process.env,
@@ -22,5 +24,7 @@ export default {
   DATA_PATH,
   USER_PATH,
   HYPERMERGE_PATH,
-  LAST_WORKSPACE_URL_PATH
+  YMERGE_PATH,
+  LAST_WORKSPACE_URL_PATH_HYPERMERGE,
+  LAST_WORKSPACE_URL_PATH_YMERGE
 }

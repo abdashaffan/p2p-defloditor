@@ -11,7 +11,7 @@ export default class Hypermerge {
   constructor(callback, withPersistence) {
     this.withPersistence = withPersistence;
     this.swarm = Hyperswarm({queue: {multiplex: true}});
-    this.repo = withPersistence ? new Repo({path: env.HYPERMERGE_PATH}) : new Repo({memory: true});
+    this.repo = this.withPersistence ? new Repo({path: env.HYPERMERGE_PATH}) : new Repo({memory: true});
     this.repo.addSwarm(this.swarm, {announce: true});
     this.url = this.repo.create({
       elements: initialElements,
@@ -83,14 +83,14 @@ export default class Hypermerge {
   _saveUrl() {
     if (this.withPersistence) {
       const data = {url: this.url};
-      fs.writeFileSync(env.LAST_WORKSPACE_URL_PATH, JSON.stringify(data));
+      fs.writeFileSync(env.LAST_WORKSPACE_URL_PATH_HYPERMERGE, JSON.stringify(data));
     }
   }
 
   _loadUrl() {
     if (this.withPersistence) {
-      if (fs.existsSync(env.LAST_WORKSPACE_URL_PATH)) {
-        const json = JSON.parse(fs.readFileSync(env.LAST_WORKSPACE_URL_PATH, {encoding: 'utf-8'}));
+      if (fs.existsSync(env.LAST_WORKSPACE_URL_PATH_HYPERMERGE)) {
+        const json = JSON.parse(fs.readFileSync(env.LAST_WORKSPACE_URL_PATH_HYPERMERGE, {encoding: 'utf-8'}));
         return json.url;
       }
     }
