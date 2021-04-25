@@ -1,6 +1,7 @@
 import * as Y from 'yjs';
 import {v4 as uuidv4} from 'uuid';
 import {WebrtcProvider} from 'y-webrtc';
+import {IndexeddbPersistence} from 'y-indexeddb';
 import {getAnonymousIdentifier, getRandomColor} from "../utils";
 
 
@@ -12,7 +13,7 @@ const ROOT_KEY = 'root';
 // In production, don't provide signaling opts since the yjs maintainer
 // already provided real signaling server to connect your peers by default.
 // Source: https://github.com/yjs/y-webrtc#signaling
-const customOpts = { signaling: ['ws://localhost:4444'] };
+const customOpts = {signaling: ['ws://localhost:4444']};
 
 
 export default class Ymerge {
@@ -24,34 +25,8 @@ export default class Ymerge {
     this.state.set(PEERS_KEY, {});
     this.url = `yjs:${uuidv4()}`;
     // this.url = `yjs:DEV_MODE`;
-    this._initPeerConnection(callback);
+    this._setup(callback);
   }
-
-  _initPeerConnection(callback) {
-    this.provider = new WebrtcProvider(
-      this.url,
-      this.ydoc,
-      customOpts
-    );
-    this.user = this._createUser();
-    this._addSelfIntoPeerList();
-    this.watch(callback);
-    this._watchPeerConnection(callback);
-  }
-
-  watch(callback) {
-    this.ydoc.on('update', (update) => {
-      console.log('[Ymerge watch triggered]:');
-      if (callback) {
-        const elements = this._mapped(this.state.get(ELEMENTS_KEY));
-        const peers = this._mapped(this.state.get(PEERS_KEY));
-        console.log('to local state: ');
-        console.log({elements, peers});
-        callback({elements, peers});
-      }
-    });
-  }
-
 
   update(handle) {
     this.ydoc.transact(() => {
@@ -68,12 +43,9 @@ export default class Ymerge {
     return true;
   }
 
-  updateWorkspace(url,callback) {
+  updateWorkspace(url, callback) {
     this.url = url;
-    // Destroy previous awareness so that when you joined new workspace,
-    // you will copy state from said workspace, not reset that workspace to use your state.
-    this.provider.awareness.destroy();
-    this._initPeerConnection(callback);
+    this._setup(callback);
   }
 
   getUrl() {
@@ -84,10 +56,40 @@ export default class Ymerge {
     return this.user;
   }
 
+  _setup(callback) {
+    this._initPeerConnection(callback);
+    this._initDatabase();
+    this._watch(callback);
+  }
 
-  _mapped(obj) {
-    if (!obj) return [];
-    return Object.keys(obj).map(key => obj[key]);
+  _initPeerConnection(callback) {
+    if (this.provider && this.provider.awareness) {
+      // Destroy previous awareness so that when you joined new workspace,
+      // you will copy state from said workspace, not reset that workspace to use your state.
+      this.provider.awareness.destroy();
+    }
+    this.provider = new WebrtcProvider(
+      this.url,
+      this.ydoc,
+      customOpts
+    );
+    this.user = this._createUser();
+    this._addSelfIntoPeerList();
+    this._watchPeerConnection(callback);
+  }
+
+  _initDatabase() {
+    if (this.persistence) {
+      this.persistence.destroy();
+    }
+    this.persistence = new IndexeddbPersistence(this.url, this.ydoc);
+    this._watchPersistenceSync();
+  }
+
+  _watchPersistenceSync() {
+    this.persistence.on('synced', (data) => {
+      console.log('content from the database is loaded', data);
+    });
   }
 
   _watchPeerConnection(callback) {
@@ -113,6 +115,19 @@ export default class Ymerge {
     })
   }
 
+  _watch(callback) {
+    this.ydoc.on('update', (update) => {
+      console.log('[Ymerge watch triggered]:');
+      if (callback) {
+        const elements = this._mapped(this.state.get(ELEMENTS_KEY));
+        const peers = this._mapped(this.state.get(PEERS_KEY));
+        console.log('to local state: ');
+        console.log({elements, peers});
+        callback({elements, peers});
+      }
+    });
+  }
+
   _addSelfIntoPeerList() {
     this.provider.awareness.setLocalStateField(this.user.selfId, this.user);
   }
@@ -128,4 +143,10 @@ export default class Ymerge {
       selfId: this._getSelfId()
     };
   }
+
+  _mapped(obj) {
+    if (!obj) return [];
+    return Object.keys(obj).map(key => obj[key]);
+  }
+
 }

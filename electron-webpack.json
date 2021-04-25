@@ -8,7 +8,8 @@
     "react-color",
     "@material-ui/core",
     "@material-ui/lab",
-    "y-webrtc"
+    "y-webrtc",
+    "y-indexeddb"
   ],
   "renderer": {
     "webpackConfig": "webpack.renderer.js"
