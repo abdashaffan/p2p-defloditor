@@ -64,7 +64,8 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
   const handleUpdatePreparation = (event,element) => {
     // Need to handle it like this because default element returned from ReactFlow
     // element only returns required metadata, causing style metadata to missing from the crdt state.
-    return handleNodeUpdate(getCompleteEntity(element.id));
+    const shapeWithStyleButObsoletePos = getCompleteEntity(element.id);
+    return handleNodeUpdate({...element, style: shapeWithStyleButObsoletePos.style});
   }
 
   const handleCopy = () => {
