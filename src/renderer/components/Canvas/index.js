@@ -20,17 +20,34 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
   // ReactFlow component's event handler only includes required metadata.
   // So we need to do this to enable style handling (and any other custom metadata, for that matter).
   // eslint-disable-next-line react/prop-types
-  const getCompleteEntity = (id) => elements.find(el => el.id === id);
+  const getCompleteEntity = (id) => id && elements.find(el => el.id === id);
 
   const handleOnLoad = (reactFlowInstance) => {
     reactFlowInstance.fitView();
   }
-  const handleColorFillChange = (color, event) => {
+
+  const handleColorFillChange = (color, _) => {
+    handleNodeUpdate({
+      ...activeEntity,
+      style: {
+        ...activeEntity.style,
+        backgroundColor: color.hex,
+      }
+    });
     setColorFill(color.hex);
   }
-  const handleColorBorderChange = (color, event) => {
+
+  const handleColorBorderChange = (color, _) => {
+    handleNodeUpdate({
+      ...activeEntity,
+      style: {
+        ...activeEntity.style,
+        borderColor: color.hex,
+      }
+    });
     setBorderColor(color.hex);
   }
+
   const handleSelectionChange = (listOfClickedElement) => {
     if (listOfClickedElement && listOfClickedElement.length > 0) {
       const entityId = listOfClickedElement[0].id;
@@ -80,6 +97,11 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
       handleAddNode(copiedEntityRef);
     }
   }
+
+  useEffect(() => {
+    // Solve color stale when copying a style node.
+    setActiveEntity(getCompleteEntity(activeEntity && activeEntity.id));
+  },[colorFill, borderColor]);
 
   useEffect(() => {
 
