@@ -7,7 +7,8 @@ import {getAnonymousIdentifier, getRandomColor} from "../utils";
 export const ELEMENTS_KEY = 'elements';
 export const PEERS_KEY = 'peers';
 const ROOT_KEY = 'root';
-// Run 'npm run signal' to start a custom local signaling server if you run this project on your local,
+// Run 'npm run y-webrtc-signal' (check package.json for the exact command)
+// to start a custom local signaling server if you run this project on your local,
 // In production, don't provide signaling opts since the yjs maintainer
 // already provided real signaling server to connect your peers by default.
 // Source: https://github.com/yjs/y-webrtc#signaling
