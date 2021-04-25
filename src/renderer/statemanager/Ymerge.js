@@ -3,6 +3,9 @@ import {v4 as uuidv4} from 'uuid';
 import {WebrtcProvider} from 'y-webrtc';
 import {IndexeddbPersistence} from 'y-indexeddb';
 import {getAnonymousIdentifier, getRandomColor} from "../utils";
+import fs from "fs";
+import env from "../../common/env";
+import {initialElements} from "../starter";
 
 
 export const ELEMENTS_KEY = 'elements';
@@ -19,13 +22,17 @@ const customOpts = {signaling: ['ws://localhost:4444']};
 export default class Ymerge {
 
   constructor(callback, withPersistence) {
+    this.withPersistence = withPersistence;
     this.ydoc = new Y.Doc();
     this.state = this.ydoc.getMap(ROOT_KEY);
-    this.state.set(ELEMENTS_KEY, {});
+    this.state.set(ELEMENTS_KEY, initialElements);
     this.state.set(PEERS_KEY, {});
-    this.url = `yjs:${uuidv4()}`;
-    // this.url = `yjs:DEV_MODE`;
-    this._setup(callback);
+    let url = this._loadUrl();
+    if (!url) {
+      // Generate new empty workspace.
+      url = `yjs:${uuidv4()}`;
+    }
+    this._setup(url, callback);
   }
 
   update(handle) {
@@ -44,8 +51,7 @@ export default class Ymerge {
   }
 
   updateWorkspace(url, callback) {
-    this.url = url;
-    this._setup(callback);
+    this._setup(url, callback);
   }
 
   getUrl() {
@@ -56,10 +62,12 @@ export default class Ymerge {
     return this.user;
   }
 
-  _setup(callback) {
+  _setup(url, callback) {
+    this.url = url;
     this._initPeerConnection(callback);
     this._initDatabase();
     this._watch(callback);
+    this._saveUrl();
   }
 
   _initPeerConnection(callback) {
@@ -142,6 +150,29 @@ export default class Ymerge {
       color: getRandomColor(),
       selfId: this._getSelfId()
     };
+  }
+
+  _saveUrl() {
+    if (this.withPersistence) {
+      try {
+        fs.mkdirSync(env.YMERGE_PATH, {recursive: true})
+      } catch (e) {
+        console.log(e);
+      } finally {
+        const data = {url: this.url};
+        fs.writeFileSync(env.LAST_WORKSPACE_URL_PATH_YMERGE, JSON.stringify(data));
+      }
+    }
+  }
+
+  _loadUrl() {
+    if (this.withPersistence) {
+      if (fs.existsSync(env.LAST_WORKSPACE_URL_PATH_YMERGE)) {
+        const json = JSON.parse(fs.readFileSync(env.LAST_WORKSPACE_URL_PATH_YMERGE, {encoding: 'utf-8'}));
+        return json.url;
+      }
+    }
+    return null;
   }
 
   _mapped(obj) {
