@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "electron-webpack dev",
+    "y-webrtc-signal": "y-webrtc-signaling",
     "compile": "electron-webpack",
     "dist": "yarn compile && electron-builder",
     "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null",
@@ -26,6 +27,7 @@
     "source-map-support": "^0.5.12",
     "unique-names-generator": "^4.4.0",
     "uuid": "^8.3.2",
+    "y-indexeddb": "^9.0.6",
     "y-webrtc": "^10.1.8",
     "yjs": "^13.5.5"
   },
