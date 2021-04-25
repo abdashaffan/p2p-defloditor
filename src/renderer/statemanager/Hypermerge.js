@@ -69,6 +69,10 @@ export default class Hypermerge {
     return this.url;
   }
 
+  getMyInfo() {
+    return this.user;
+  }
+
   _addSelfIntoPeerList() {
     this.update(state => {
       console.log('[add self into peer list]');

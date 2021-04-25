@@ -91,6 +91,7 @@ export const useEntityManager = (withPersistence) => {
 
   const getUrl = () => hypermerge.getUrl();
 
+  const getUser = () => hypermerge.getMyInfo();
 
   return {
     addNewShape,
@@ -101,6 +102,7 @@ export const useEntityManager = (withPersistence) => {
     updateUrl,
     validateUrl,
     getUrl,
+    getUser,
     elements: localState.elements,
     peers: localState.peers
   };

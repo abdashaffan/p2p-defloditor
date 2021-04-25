@@ -26,13 +26,22 @@ function Root() {
     updateEdgeConnection,
     updateUrl,
     validateUrl,
-    getUrl
+    getUrl,
+    getUser
   } = useEntityManager(withPersistence);
+
+  const getAnnotatedPeers = (peers) => {
+    return peers.map(peer => {
+      const me = getUser();
+      if (peer.selfId !== me.selfId) return peer;
+      return {...peer, isMe: true}
+    })
+  }
 
   return (
     <ReactFlowProvider>
       <Container className="root">
-        <Row className="mt-5"><h2>Basic Flowchart editor</h2></Row>
+        <Row className="mt-5"><h2>Basic Flowchart Editor</h2></Row>
         <Row className="mt-3">
           <UrlInput handleUrlUpdate={updateUrl} validateUrl={validateUrl}/>
         </Row>
@@ -42,7 +51,7 @@ function Root() {
         <Row><p><b>{getUrl()}</b></p></Row>
         <Row className="mt-3"><h5>Users in this document: {peers.length}</h5></Row>
         <Row>
-          <CustomAvatarGroup peers={peers}/>
+          <CustomAvatarGroup peers={getAnnotatedPeers(peers)}/>
         </Row>
         <Row className="canvas-container mt-5 mb-5">
           <Canvas

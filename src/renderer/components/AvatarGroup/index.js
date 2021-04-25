@@ -10,8 +10,8 @@ export default function CustomAvatarGroup(props) {
       {
         // eslint-disable-next-line react/prop-types
         props.peers.map(peer => (
-          <Tooltip title={peer.name} key={peer.selfId}>
-            <Avatar alt={peer.name} style={{backgroundColor: peer.color}}>{peer.name[0]}</Avatar>
+          <Tooltip title={`${peer.name} ${peer.isMe ? '(You)' : ''}`} key={peer.selfId}>
+            <Avatar alt={peer.name} style={{backgroundColor: peer.color}}>{peer.name[0].toUpperCase()}</Avatar>
           </Tooltip>
         ))
       }
