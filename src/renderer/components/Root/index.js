@@ -31,6 +31,7 @@ function Root() {
   } = useEntityManager(withPersistence);
 
   const getAnnotatedPeers = (peers) => {
+    if (peers.length < 1) return peers;
     return peers.map(peer => {
       const me = getUser();
       if (peer.selfId !== me.selfId) return peer;
