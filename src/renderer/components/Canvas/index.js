@@ -27,24 +27,28 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
   }
 
   const handleColorFillChange = (color, _) => {
-    handleNodeUpdate({
-      ...activeEntity,
-      style: {
-        ...activeEntity.style,
-        backgroundColor: color.hex,
-      }
-    });
+    if (isANode(activeEntity)) {
+      handleNodeUpdate({
+        ...activeEntity,
+        style: {
+          ...activeEntity.style,
+          backgroundColor: color.hex,
+        }
+      });
+    }
     setColorFill(color.hex);
   }
 
   const handleColorBorderChange = (color, _) => {
-    handleNodeUpdate({
-      ...activeEntity,
-      style: {
-        ...activeEntity.style,
-        borderColor: color.hex,
-      }
-    });
+    if (isANode(activeEntity)) {
+      handleNodeUpdate({
+        ...activeEntity,
+        style: {
+          ...activeEntity.style,
+          borderColor: color.hex,
+        }
+      });
+    }
     setBorderColor(color.hex);
   }
 
