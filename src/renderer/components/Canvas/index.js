@@ -65,7 +65,9 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
     // Need to handle it like this because default element returned from ReactFlow
     // element only returns required metadata, causing style metadata to missing from the crdt state.
     const shapeWithStyleButObsoletePos = getCompleteEntity(element.id);
-    return handleNodeUpdate({...element, style: shapeWithStyleButObsoletePos.style});
+    const updatedActiveEntity = {...element, style: shapeWithStyleButObsoletePos.style};
+    setActiveEntity(updatedActiveEntity);
+    return handleNodeUpdate(updatedActiveEntity);
   }
 
   const handleCopy = () => {
@@ -101,6 +103,17 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
     if (isANode(copiedEntityRef)) {
       handleAddNode(copiedEntityRef);
     }
+  }
+
+  const handleNewShapeAddition = () => {
+    return handleAddNode({
+      data: {label: 'New Node'},
+      position: {x: 250, y: 250},
+      style: {
+        backgroundColor: colorFill,
+        borderColor: borderColor
+      }
+    })
   }
 
   useEffect(() => {
@@ -147,7 +160,7 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
         <Col>
           <ActionButton
             variant="primary"
-            handleClick={handleAddNode}
+            handleClick={handleNewShapeAddition}
             label="Add New Shape"
           />
         </Col>
