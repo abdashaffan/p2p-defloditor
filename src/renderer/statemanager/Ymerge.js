@@ -27,21 +27,38 @@ export default class Ymerge {
     });
   }
 
-  updateElement(handle) {
-    this._update(ELEMENTS_KEY, handle);
-  }
 
-  _updatePeer(handle) {
-    this._update(PEERS_KEY, handle);
-  }
-
-  _update(documentKey, handle) {
+  update(handle) {
     this.ydoc.transact(() => {
-      const data = this.state.get(documentKey);
+      const elements = this.state.get(ELEMENTS_KEY);
+      const peers = this.state.get(PEERS_KEY);
+      const data = {elements,peers};
       handle(data);
-      this.state.set(documentKey, data);
+      this.state.set(ELEMENTS_KEY, data.elements);
+      this.state.set(PEERS_KEY, data.peers);
     });
   }
+
+  validateWorkspace(url) {
+    // TODO: TBD
+    return false;
+  }
+
+  updateWorkspace() {
+    // TODO: TBD
+  }
+
+  getUrl() {
+    // TODO: TBD
+    return null;
+  }
+
+  getMyInfo() {
+    // TODO: TBD
+    return {};
+  }
+
+
 
   _mapped(obj) {
     return Object.keys(obj).map(key => obj[key]);
