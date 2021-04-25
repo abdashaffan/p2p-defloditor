@@ -65,7 +65,9 @@ export default class Ymerge {
   _setup(url, callback) {
     this.url = url;
     this._initPeerConnection(callback);
-    this._initDatabase();
+    if (this.withPersistence) {
+      this._initDatabase();
+    }
     this._watch(callback);
     this._saveUrl();
   }
