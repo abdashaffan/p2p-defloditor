@@ -83,7 +83,11 @@ export default class Ymerge {
       this.ydoc,
       customOpts
     );
-    this.user = this._createUser();
+    if (!this.user) {
+      this.user = this._createUser();
+    } else {
+      this.user.selfId = this._getSelfId();
+    }
     this._addSelfIntoPeerList();
     this._watchPeerConnection(callback);
   }
@@ -143,7 +147,7 @@ export default class Ymerge {
   }
 
   _getSelfId() {
-    return this.provider.awareness.clientID
+    return this.provider.awareness.clientID;
   }
 
   _createUser() {
