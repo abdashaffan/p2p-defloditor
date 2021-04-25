@@ -48,13 +48,29 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
 
   const handleCopy = () => {
     if (isANode(activeEntity)) {
-      setCopiedEntityRef(activeEntity);
+      // Move the copied shape down a bit to make it visible after paste.
+      const copied = {
+        ...activeEntity,
+        position: {
+          x: activeEntity.position.x +25,
+          y: activeEntity.position.y + 30,
+        }
+      }
+      setCopiedEntityRef(copied);
     }
   }
 
   const handleCut = () => {
     if (isANode(activeEntity)) {
-      setCopiedEntityRef(activeEntity);
+      // Move the copied shape down a bit to make it visible after paste.
+      const copied = {
+        ...activeEntity,
+        position: {
+          x: activeEntity.position.x + 25,
+          y: activeEntity.position.y + 30,
+        }
+      }
+      setCopiedEntityRef(copied);
       handleRemove([activeEntity]);
     }
   }

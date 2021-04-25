@@ -18,7 +18,6 @@ export const useEntityManager = (withPersistence) => {
       newNode = {
         ...el,
         id: `node:${uuidv4()}`,
-        position: {x: el.position.x, y: el.position.y + 50}
       }
     } else {
       newNode = {
