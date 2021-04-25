@@ -118,7 +118,7 @@ export default class Hypermerge {
     Object.keys(state.peers).forEach(key => {
       peers.push(_mapToLocalRecursive(state.peers[key]));
     });
-    console.log("updated local state: ", {elements, peers});
+    console.log("updated local state: ", elements);
     return {elements, peers};
   }
 }

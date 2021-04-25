@@ -17,6 +17,11 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
   const [borderColor, setBorderColor] = useState("#000");
 
 
+  // ReactFlow component's event handler only includes required metadata.
+  // So we need to do this to enable style handling (and any other custom metadata, for that matter).
+  // eslint-disable-next-line react/prop-types
+  const getCompleteEntity = (id) => elements.find(el => el.id === id);
+
   const handleOnLoad = (reactFlowInstance) => {
     reactFlowInstance.fitView();
   }
@@ -28,17 +33,17 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
   }
   const handleSelectionChange = (listOfClickedElement) => {
     if (listOfClickedElement && listOfClickedElement.length > 0) {
-      // Original react-flow API supports multiple selection,
-      // but this app only supports one selection.
-      const firstActiveEntity = listOfClickedElement[0];
-      // eslint-disable-next-line react/prop-types
-      const isStillExist = elements.find(el => el.id === firstActiveEntity.id);
-      if (isStillExist) {
-        setActiveEntity(firstActiveEntity);
-        return;
-      }
+      const entityId = listOfClickedElement[0].id;
+      setActiveEntity(getCompleteEntity(entityId));
+      return;
     }
     setActiveEntity(null);
+  }
+
+  const handleUpdatePreparation = (event,element) => {
+    // Need to handle it like this because default element returned from ReactFlow
+    // element only returns required metadata, causing style metadata to missing from the crdt state.
+    return handleNodeUpdate(getCompleteEntity(element.id));
   }
 
   const handleCopy = () => {
@@ -117,8 +122,7 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
           elements={elements}
           onConnect={handleAddEdge}
           onElementsRemove={handleRemove}
-          onNodeDragStop={handleNodeUpdate}
-          onNodeMouseLeave={(event,node) => handleSelectionChange([node])}
+          onNodeDragStop={handleUpdatePreparation}
           onEdgeUpdate={handleEdgeUpdate}
           onLoad={handleOnLoad}
           onSelectionChange={handleSelectionChange}

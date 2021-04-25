@@ -51,7 +51,7 @@ export const useEntityManager = (withPersistence) => {
     });
   }
 
-  const updateNode = (event, element) => {
+  const updateNode = (element) => {
     return hypermerge.update(state => {
       state.elements[element.id] = element;
     })
