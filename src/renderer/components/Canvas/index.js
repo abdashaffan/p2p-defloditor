@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import ReactFlow from "react-flow-renderer";
+import ReactFlow, {MiniMap, Background, Controls} from "react-flow-renderer";
 import {isANode} from "../../utils";
 import {Col, Row} from "react-bootstrap";
 import {CompactPicker} from "react-color";
@@ -182,7 +182,11 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
           onEdgeUpdate={handleEdgeUpdate}
           onLoad={handleOnLoad}
           onSelectionChange={handleSelectionChange}
-        />
+        >
+          <Controls />
+          <Background color="#aaa" gap={16} />
+          <MiniMap nodeColor="#333" nodeStrokeWidth={3} nodeBorderRadius={2}/>
+        </ReactFlow>
       </Row>
     </>
   );
