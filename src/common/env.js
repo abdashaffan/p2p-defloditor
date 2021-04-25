@@ -18,7 +18,7 @@ export const LAST_WORKSPACE_URL_PATH_HYPERMERGE = Path.join(HYPERMERGE_PATH, 'ur
 export const LAST_WORKSPACE_URL_PATH_YMERGE = Path.join(YMERGE_PATH, 'url.json');
 
 export default {
-  // ...process.env,
+  module: process.env.MODULE,
   isProduction: process.env.NODE_ENV === 'production',
   isDevelopment: process.env.NODE_ENV !== 'production',
   DATA_PATH,

@@ -13,10 +13,7 @@ import CustomAvatarGroup from "../AvatarGroup";
 // Save document in user's local in production.
 // const withPersistence = env.isProduction;
 const withPersistence = false;
-// TODO: Pass preference from command directly.
-const opts = ['HYPERMERGE', 'YMERGE'];
-const selectedSyncModule = opts[0];
-
+const module = env.module;
 function Root() {
 
   const {
@@ -31,7 +28,7 @@ function Root() {
     validateUrl,
     getUrl,
     getUser
-  } = useEntityManager(withPersistence,selectedSyncModule);
+  } = useEntityManager(withPersistence,module);
 
   const getAnnotatedPeers = (peers) => {
     if (peers.length < 1) return peers;
