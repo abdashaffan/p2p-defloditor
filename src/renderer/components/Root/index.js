@@ -44,7 +44,7 @@ function Root() {
   if (peers && peers.length > 0) {
     return (
       <ReactFlowProvider>
-        <Container className="root">
+        <Container className="root m-4">
           <Row className="mt-5"><h2>Basic Flowchart Editor</h2></Row>
           <Row className="mt-3">
             <UrlInput handleUrlUpdate={updateUrl} validateUrl={validateUrl}/>
