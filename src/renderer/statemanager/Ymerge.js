@@ -23,10 +23,6 @@ export default class Ymerge {
 
   constructor(callback, withPersistence) {
     this.withPersistence = withPersistence;
-    this.ydoc = new Y.Doc();
-    this.state = this.ydoc.getMap(ROOT_KEY);
-    this.state.set(ELEMENTS_KEY, initialElements);
-    this.state.set(PEERS_KEY, {});
     let url = this._loadUrl();
     if (!url) {
       // Generate new empty workspace.
@@ -64,6 +60,7 @@ export default class Ymerge {
 
   _setup(url, callback) {
     this.url = url;
+    this._initMainDocument();
     this._initPeerConnection(callback);
     if (this.withPersistence) {
       this._initDatabase();
@@ -72,11 +69,25 @@ export default class Ymerge {
     this._saveUrl();
   }
 
+  _initMainDocument() {
+    if (this.ydoc) {
+      console.log('destroy previous ydoc');
+      this.ydoc.destroy();
+      this.ydoc = null;
+      this.state = null;
+    }
+    this.ydoc = new Y.Doc();
+    this.state = this.ydoc.getMap(ROOT_KEY);
+    this.state.set(ELEMENTS_KEY, initialElements);
+    this.state.set(PEERS_KEY, {});
+  }
+
   _initPeerConnection(callback) {
     if (this.provider && this.provider.awareness) {
       // Destroy previous awareness so that when you joined new workspace,
       // you will copy state from said workspace, not reset that workspace to use your state.
       this.provider.awareness.destroy();
+      this.provider = null;
     }
     this.provider = new WebrtcProvider(
       this.url,
@@ -108,7 +119,6 @@ export default class Ymerge {
 
   _watchPeerConnection(callback) {
     this.provider.awareness.on('update', () => {
-      console.log('[awareness watcher triggered]:');
 
       // Change the map key from increment number into clientID.
       const data = Array.from(this.provider.awareness.getStates().values());
@@ -118,7 +128,6 @@ export default class Ymerge {
         const value = d[key];
         peers[key] = value;
       })
-      console.log(`peers from awareness : `, peers);
       this.state.set(PEERS_KEY, peers);
       if (callback) {
         callback({
@@ -135,8 +144,7 @@ export default class Ymerge {
       if (callback) {
         const elements = this._mapped(this.state.get(ELEMENTS_KEY));
         const peers = this._mapped(this.state.get(PEERS_KEY));
-        console.log('to local state: ');
-        console.log({elements, peers});
+        console.log('to local state: ',{elements, peers});
         callback({elements, peers});
       }
     });
