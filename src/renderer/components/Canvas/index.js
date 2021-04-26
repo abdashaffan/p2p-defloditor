@@ -124,21 +124,21 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
   useEffect(() => {
 
     const keyboard = {
-      'C': 'c',
-      'X': 'x',
-      'V': 'v'
+      'COPY': 'C',
+      'CUT': 'X',
+      'PASTE': 'V'
     }
 
     const handleClick = (event) => {
-      if (event.ctrlKey) {
+      if (event.shiftKey) {
         switch (event.key) {
-          case keyboard.C:
+          case keyboard.COPY:
             handleCopy();
             break;
-          case keyboard.X:
+          case keyboard.CUT:
             handleCut();
             break;
-          case keyboard.V:
+          case keyboard.PASTE:
             handlePaste();
             break;
           default:
