@@ -1,6 +1,6 @@
 'use strict'
 import env from 'common/env'
-import {app, BrowserWindow} from 'electron'
+import {app, BrowserWindow, screen} from 'electron'
 import * as path from 'path'
 import {format as formatUrl} from 'url'
 import initDevTools from './dev/initDevTools'
@@ -10,17 +10,19 @@ import installExtension, {REACT_DEVELOPER_TOOLS} from 'electron-devtools-install
 let mainWindow
 
 function createMainWindow() {
+  const display = screen.getPrimaryDisplay()
+  const maxiSize = display.workAreaSize
   const window = new BrowserWindow({
-    width: 1000,
-    height: 1500,
-    webPreferences: {nodeIntegration: true, contextIsolation: false}
+    webPreferences: {nodeIntegration: true, contextIsolation: false},
+    height: maxiSize.height,
+    width: maxiSize.width
   })
 
   let url
 
   if (env.isDevelopment) {
     url = `http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}`
-    initDevTools(window, true)
+    // initDevTools(window, true)
   } else {
     url = formatUrl({
       pathname: path.join(__dirname, 'index.html'),

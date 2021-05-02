@@ -4,7 +4,7 @@ import React from 'react';
 
 const ActionButton = (props) => {
   // eslint-disable-next-line react/prop-types
-  return ( <Button variant={props.variant} onClick={() => props.handleClick()}>{props.label}</Button>);
+  return ( <Button size={"sm"} variant={props.variant} onClick={() => props.handleClick()}>{props.label}</Button>);
 }
 
 export default ActionButton;

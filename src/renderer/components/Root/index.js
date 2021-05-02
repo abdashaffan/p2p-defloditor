@@ -45,12 +45,12 @@ function Root() {
     return (
       <ReactFlowProvider>
         <Container fluid>
-          <Row className="app-top pt-4 px-4">
-            <Col xs={0} md={8}>
+          <Row className="app-top px-4 py-4">
+            <Col md={7}>
               <Row><b>Current workspace:</b></Row>
               <Row>{getUrl()}</Row>
             </Col>
-            <Col xs={12} md={4}>
+            <Col className="d-sm-none d-md-block">
               <Row>
                 <Col className="d-flex align-items-center justify-content-end">
                   <CustomAvatarGroup peers={getAnnotatedPeers(peers)}/>
@@ -61,16 +61,15 @@ function Root() {
               </Row>
             </Col>
           </Row>
-          <hr/>
           <Row className="app-bottom">
-            {/*<Canvas*/}
-            {/*  elements={elements}*/}
-            {/*  handleRemove={deleteShape}*/}
-            {/*  handleAddEdge={addNewEdge}*/}
-            {/*  handleNodeUpdate={updateNode}*/}
-            {/*  handleEdgeUpdate={updateEdgeConnection}*/}
-            {/*  handleAddNode={addNewShape}*/}
-            {/*/>*/}
+            <Canvas
+              elements={elements}
+              handleRemove={deleteShape}
+              handleAddEdge={addNewEdge}
+              handleNodeUpdate={updateNode}
+              handleEdgeUpdate={updateEdgeConnection}
+              handleAddNode={addNewShape}
+            />
           </Row>
         </Container>
       </ReactFlowProvider>

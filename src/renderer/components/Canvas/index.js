@@ -61,7 +61,7 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
     setActiveEntity(null);
   }
 
-  const handleUpdatePreparation = (event,element) => {
+  const handleUpdatePreparation = (event, element) => {
     // Need to handle it like this because default element returned from ReactFlow
     // element only returns required metadata, causing style metadata to missing from the crdt state.
     const shapeWithStyleButObsoletePos = getCompleteEntity(element.id);
@@ -76,7 +76,7 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
       const copied = {
         ...activeEntity,
         position: {
-          x: activeEntity.position.x +25,
+          x: activeEntity.position.x + 25,
           y: activeEntity.position.y + 30,
         }
       }
@@ -119,7 +119,7 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
   useEffect(() => {
     // Solve color stale when copying a style node.
     setActiveEntity(getCompleteEntity(activeEntity && activeEntity.id));
-  },[colorFill, borderColor]);
+  }, [colorFill, borderColor]);
 
   useEffect(() => {
 
@@ -156,24 +156,40 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
 
   return (
     <>
-      <Row style={{alignItems:'center'}} className="mb-4">
-        <Col>
-          <ActionButton
-            variant="primary"
-            handleClick={handleNewShapeAddition}
-            label="Add New Shape"
-          />
-        </Col>
-        <Col className="toolkit">
-          <CompactPicker onChangeComplete={handleColorFillChange} color={colorFill}/>
-          <h5 className="m-2">Set Color Fill</h5>
-        </Col>
-        <Col className="toolkit">
-          <CompactPicker onChangeComplete={handleColorBorderChange} color={borderColor}/>
-          <h5 className="m-2">Set Border Color</h5>
-        </Col>
-      </Row>
-      <Row className="canvas-wrapper">
+      <Col className="left-sidebar px-4 py-4 d-sm-none d-lg-block" xs={0} lg={4} xl={3}>
+        <Row className="my-3">
+          <Col xs={12}>
+            <ActionButton
+              variant="primary"
+              handleClick={handleNewShapeAddition}
+              label="Add New Node"
+            />
+          </Col>
+        </Row>
+        <Row className="my-3">
+          <Col xs={12}>
+            <p className="m-2">Color Fill</p>
+          </Col>
+          <Col xs={12}>
+            <CompactPicker
+              onChangeComplete={handleColorFillChange}
+              color={colorFill}
+            />
+          </Col>
+        </Row>
+        <Row className="my-3">
+          <Col xs={12}>
+            <p className="m-2">Border Color</p>
+          </Col>
+          <Col xs={12}>
+            <CompactPicker
+              onChangeComplete={handleColorBorderChange}
+              color={borderColor}
+            />
+          </Col>
+        </Row>
+      </Col>
+      <Col className="pb-5">
         <ReactFlow
           elements={elements}
           onConnect={handleAddEdge}
@@ -183,11 +199,11 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
           onLoad={handleOnLoad}
           onSelectionChange={handleSelectionChange}
         >
-          <Controls />
-          <Background color="#aaa" gap={16} />
+          <Controls/>
+          <Background color="#aaa" gap={16}/>
           <MiniMap nodeColor="#333" nodeStrokeWidth={3} nodeBorderRadius={2}/>
         </ReactFlow>
-      </Row>
+      </Col>
     </>
   );
 }

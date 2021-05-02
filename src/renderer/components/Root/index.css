@@ -1,7 +1,12 @@
 .app-top {
-  min-height: 20%;
+  height: 15vh;
+  border-bottom: 1px solid #eee;
 }
 
 .app-bottom {
-  min-height: 80%;
+  height: 85vh;
+}
+
+.left-sidebar {
+  border-right: 1px solid #eee;
 }
