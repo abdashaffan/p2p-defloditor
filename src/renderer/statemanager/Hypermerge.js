@@ -44,6 +44,7 @@ export default class Hypermerge {
   update(handle) {
     this.repo.change(this.url, (state) => {
       handle(state);
+      this._removeOrphanedEdge(state);
     });
   }
 
@@ -71,6 +72,30 @@ export default class Hypermerge {
 
   getMyInfo() {
     return this.user;
+  }
+
+  _removeOrphanedEdge(state) {
+    // Find and remove edge with node with deleted source or target.
+    const nodeCount = {};
+    const edgeList = [];
+    this.repo.doc(this.url, doc => {
+      Object.keys(doc.elements).forEach(key => {
+        if (doc.elements[key].source) {
+          edgeList.push(key);
+          return;
+        }
+        if (!nodeCount[key]) {
+          nodeCount[key] = 1;
+        } else {
+          nodeCount[key]++;
+        }
+      });
+    });
+    edgeList.forEach(edge => {
+      if (!nodeCount[edge.source] || !nodeCount[edge.target]) {
+        delete state.elements[edge.id];
+      }
+    });
   }
 
   _addSelfIntoPeerList() {
