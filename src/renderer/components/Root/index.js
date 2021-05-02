@@ -6,7 +6,7 @@ import Canvas from "../Canvas";
 import UrlInput from "../Input";
 import {useEntityManager} from '../../Hooks';
 import {ReactFlowProvider} from "react-flow-renderer";
-import {Container, Row} from "react-bootstrap";
+import {Col, Container, Row} from "react-bootstrap";
 import env from "../../../common/env";
 import CustomAvatarGroup from "../AvatarGroup";
 import {LinearProgress} from "@material-ui/core";
@@ -44,34 +44,39 @@ function Root() {
   if (peers && peers.length > 0) {
     return (
       <ReactFlowProvider>
-        <Container className="root m-4">
-          <Row className="mt-5"><h2>Basic Flowchart Editor</h2></Row>
-          <Row className="mt-3">
-            <UrlInput handleUrlUpdate={updateUrl} validateUrl={validateUrl}/>
+        <Container fluid>
+          <Row className="app-top pt-4 px-4">
+            <Col xs={0} md={8}>
+              <Row><b>Current workspace:</b></Row>
+              <Row>{getUrl()}</Row>
+            </Col>
+            <Col xs={12} md={4}>
+              <Row>
+                <Col className="d-flex align-items-center justify-content-end">
+                  <CustomAvatarGroup peers={getAnnotatedPeers(peers)}/>
+                </Col>
+                <Col xs={8}>
+                  <UrlInput handleUrlUpdate={updateUrl} validateUrl={validateUrl}/>
+                </Col>
+              </Row>
+            </Col>
           </Row>
-          <Row className="mt-3">
-            <h5>Current Workspace Url:</h5>
-          </Row>
-          <Row><p><b>{getUrl()}</b></p></Row>
-          <Row className="mt-3"><h5>Users in this document: {peers.length}</h5></Row>
-          <Row>
-            <CustomAvatarGroup peers={getAnnotatedPeers(peers)}/>
-          </Row>
-          <Row className="canvas-container mt-5 mb-5">
-            <Canvas
-              elements={elements}
-              handleRemove={deleteShape}
-              handleAddEdge={addNewEdge}
-              handleNodeUpdate={updateNode}
-              handleEdgeUpdate={updateEdgeConnection}
-              handleAddNode={addNewShape}
-            />
+          <hr/>
+          <Row className="app-bottom">
+            {/*<Canvas*/}
+            {/*  elements={elements}*/}
+            {/*  handleRemove={deleteShape}*/}
+            {/*  handleAddEdge={addNewEdge}*/}
+            {/*  handleNodeUpdate={updateNode}*/}
+            {/*  handleEdgeUpdate={updateEdgeConnection}*/}
+            {/*  handleAddNode={addNewShape}*/}
+            {/*/>*/}
           </Row>
         </Container>
       </ReactFlowProvider>
     )
   }
-  return <LinearProgress />;
+  return <LinearProgress/>;
 }
 
 

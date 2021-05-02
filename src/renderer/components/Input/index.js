@@ -26,7 +26,7 @@ const UrlInput = ({handleUrlUpdate, validateUrl}) => {
   });
 
   return (
-    <InputGroup className="mt-3 mb-3" >
+    <InputGroup className="mt-3 mb-3" size="sm">
       <FormControl
         placeholder="Join Workspace"
         aria-label="Join Workspace url input"
