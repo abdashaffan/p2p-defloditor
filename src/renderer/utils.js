@@ -1,5 +1,5 @@
 import {v4 as uuidv4} from 'uuid';
-const {uniqueNamesGenerator, adjectives, animals} = require('unique-names-generator');
+const {uniqueNamesGenerator, adjectives, names} = require('unique-names-generator');
 
 export const entityEnum = Object.freeze({
   user: 1,
@@ -22,7 +22,7 @@ export const generateId = (entity) => {
 
 export const getAnonymousIdentifier = () =>
   uniqueNamesGenerator({
-    dictionaries: [adjectives, animals],
+      dictionaries: [names,names],
     separator: '-',
     length: 2
   });

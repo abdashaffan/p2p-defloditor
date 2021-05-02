@@ -91,9 +91,13 @@ export default class Ymerge {
     }
     this.provider = new WebrtcProvider(
       this.url,
-      this.ydoc,
-      customOpts
+      this.ydoc
     );
+    // this.provider = new WebrtcProvider(
+    //   this.url,
+    //   this.ydoc,
+    //   customOpts
+    // );
     if (!this.user) {
       this.user = this._createUser();
     } else {
