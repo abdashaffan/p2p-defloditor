@@ -72,8 +72,11 @@ export default class Ymerge {
   _initMainDocument() {
     if (this.ydoc) {
       console.log('destroy previous ydoc');
+      // Destroy previous awareness so that when you joined new workspace,
+      // you will copy state from said workspace, not reset that workspace to use your state.
       this.ydoc.destroy();
       this.ydoc = null;
+      // important.
       this.state = null;
     }
     this.ydoc = new Y.Doc();
@@ -84,8 +87,6 @@ export default class Ymerge {
 
   _initPeerConnection(callback) {
     if (this.provider && this.provider.awareness) {
-      // Destroy previous awareness so that when you joined new workspace,
-      // you will copy state from said workspace, not reset that workspace to use your state.
       this.provider.awareness.destroy();
       this.provider = null;
     }
