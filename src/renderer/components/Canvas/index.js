@@ -189,7 +189,7 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
           </Col>
         </Row>
       </Col>
-      <Col className="pb-5">
+      <Col className="pb-1 px-0">
         <ReactFlow
           elements={elements}
           onConnect={handleAddEdge}
@@ -200,7 +200,7 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
           onSelectionChange={handleSelectionChange}
         >
           <Controls/>
-          <Background color="#aaa" gap={16}/>
+          <Background color="#aaa" gap={16} variant="lines"/>
           <MiniMap nodeColor="#333" nodeStrokeWidth={3} nodeBorderRadius={2}/>
         </ReactFlow>
       </Col>
