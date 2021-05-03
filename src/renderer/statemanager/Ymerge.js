@@ -70,6 +70,9 @@ export default class Ymerge {
   }
 
   _initMainDocument() {
+    if (this.ydoc) {
+      this.ydoc.destroy();
+    }
     this.ydoc = new Y.Doc();
     this.state = this.ydoc.getMap(ROOT_KEY);
     this.update(state => {
@@ -80,10 +83,6 @@ export default class Ymerge {
   }
 
   _initPeerConnection(callback) {
-    if (this.provider && this.provider.awareness) {
-      this.provider.awareness.destroy();
-      this.provider = null;
-    }
     this.provider = new WebrtcProvider(
       this.url,
       this.ydoc
@@ -138,13 +137,20 @@ export default class Ymerge {
   }
 
   _watch(callback) {
-    this.ydoc.on('update', (update) => {
-      console.log('[Ymerge watch triggered]:', update);
+    this.ydoc.on('update', () => {
+      console.log('[Ymerge UPDATE]');
       if (callback) {
         const elements = this._mapped(this.state.get(ELEMENTS_KEY));
         const peers = this._mapped(this.state.get(PEERS_KEY));
         callback({elements, peers});
       }
+    });
+    this.ydoc.on('destroy', () => {
+      console.log('[YDOC DESTROY]');
+      this.provider.awareness.destroy();
+      this.ydoc = null;
+      this.state = null;
+      this.provider = null;
     });
   }
 
