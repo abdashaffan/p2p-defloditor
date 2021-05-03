@@ -26,7 +26,7 @@ export default class Ymerge {
       // Generate new empty workspace.
       url = `yjs:${uuidv4()}`;
     }
-    this._setup(url, callback);
+    this._setup(url, callback, true);
   }
 
   addData(key, dataArr) {
@@ -70,9 +70,9 @@ export default class Ymerge {
     return this.user;
   }
 
-  _setup(url, callback) {
+  _setup(url, callback, usingStarter) {
     this.url = url;
-    this._initMainDocument();
+    this._initMainDocument(usingStarter);
     this._initPeerConnection(callback);
     if (this.withPersistence) {
       this._initDatabase();
@@ -81,13 +81,15 @@ export default class Ymerge {
     this._saveUrl();
   }
 
-  _initMainDocument() {
+  _initMainDocument(usingStarter) {
     if (this.ydoc) {
       this.ydoc.destroy();
     }
     this.ydoc = new Y.Doc();
-    this.addData(ELEMENTS_KEY, [initialElements['node:1']]);
-    this.addData(ELEMENTS_KEY, [initialElements['node:2']]);
+    if (usingStarter) {
+      this.addData(ELEMENTS_KEY, [initialElements['node:1']]);
+      this.addData(ELEMENTS_KEY, [initialElements['node:2']]);
+    }
   }
 
   _initPeerConnection(callback) {
