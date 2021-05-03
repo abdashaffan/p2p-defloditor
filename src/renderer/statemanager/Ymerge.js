@@ -70,19 +70,13 @@ export default class Ymerge {
   }
 
   _initMainDocument() {
-    if (this.ydoc) {
-      console.log('destroy previous ydoc');
-      // Destroy previous awareness so that when you joined new workspace,
-      // you will copy state from said workspace, not reset that workspace to use your state.
-      this.ydoc.destroy();
-      this.ydoc = null;
-      // important.
-      this.state = null;
-    }
     this.ydoc = new Y.Doc();
     this.state = this.ydoc.getMap(ROOT_KEY);
-    this.state.set(ELEMENTS_KEY, initialElements);
-    this.state.set(PEERS_KEY, {});
+    this.update(state => {
+      // Reset elements.
+      state.elements = initialElements;
+      state.peers = {};
+    });
   }
 
   _initPeerConnection(callback) {
@@ -123,8 +117,8 @@ export default class Ymerge {
   }
 
   _watchPeerConnection(callback) {
-    this.provider.awareness.on('update', () => {
-
+    this.provider.awareness.on('update', ({added,updated,removed}) => {
+      console.log('[AWARENESS UPDATE]');
       // Change the map key from increment number into clientID.
       const data = Array.from(this.provider.awareness.getStates().values());
       const peers = {};
@@ -145,11 +139,10 @@ export default class Ymerge {
 
   _watch(callback) {
     this.ydoc.on('update', (update) => {
-      console.log('[Ymerge watch triggered]:');
+      console.log('[Ymerge watch triggered]:', update);
       if (callback) {
         const elements = this._mapped(this.state.get(ELEMENTS_KEY));
         const peers = this._mapped(this.state.get(PEERS_KEY));
-        console.log('to local state: ',{elements, peers});
         callback({elements, peers});
       }
     });
