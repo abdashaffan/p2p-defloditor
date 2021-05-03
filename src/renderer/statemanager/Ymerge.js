@@ -159,7 +159,7 @@ export default class Ymerge {
 
     this.ydoc.getMap(ELEMENTS_KEY).observe(event => {
       console.log('[Ymerge] Element observe');
-      console.log(event.changes);
+      console.log(event.changes.keys);
     });
 
     this.ydoc.on('destroy', () => {
