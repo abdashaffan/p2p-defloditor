@@ -40,6 +40,7 @@ export default class Ymerge {
   updateData(key, dataArr) {
     this.ydoc.transact(() => {
       dataArr.forEach(data => {
+        // id for elements, selfId for peers.
         const idf = data.id || data.selfId;
         this.ydoc.getMap(key).set(idf, data);
       })
