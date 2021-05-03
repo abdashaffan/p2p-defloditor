@@ -2,7 +2,7 @@ import * as Y from 'yjs';
 import {v4 as uuidv4} from 'uuid';
 import {WebrtcProvider} from 'y-webrtc';
 import {IndexeddbPersistence} from 'y-indexeddb';
-import {getAnonymousIdentifier, getRandomColor} from "../utils";
+import {getAnonymousIdentifier, getRandomColor, isANode} from "../utils";
 import fs from "fs";
 import env from "../../common/env";
 import {initialElements} from "../starter";
@@ -29,20 +29,45 @@ export default class Ymerge {
     this._setup(url, callback, true);
   }
 
-  addData(key, dataArr) {
+  addData(key, elArr) {
     this.ydoc.transact(() => {
-      dataArr.forEach(data => {
-        this.ydoc.getMap(key).set(data.id, data);
+      elArr.forEach(el => {
+        if (isANode(el)) {
+          const node = new Y.Map();
+          node.set('id', el.id);
+          node.set('label', el.data.label);
+          node.set('type', el.type);
+          node.set('x', el.position.x);
+          node.set('y', el.position.y);
+          node.set('backgroundColor', el.style.backgroundColor);
+          node.set('borderColor', el.style.borderColor);
+          this.ydoc.getMap(key).set(el.id, node);
+        } else {
+          const edge = new Y.Map();
+          edge.set('id', el.id);
+          edge.set('source', el.source);
+          edge.set('target', el.target);
+          this.ydoc.getMap(key).set(el.id, edge);
+        }
       })
     });
   }
 
-  updateData(key, dataArr) {
+  updateData(key, elArr) {
     this.ydoc.transact(() => {
-      dataArr.forEach(data => {
-        // id for elements, selfId for peers.
-        const idf = data.id || data.selfId;
-        this.ydoc.getMap(key).set(idf, data);
+      elArr.forEach(el => {
+        this.ydoc.getMap(key).get(el.id).set('id', el.id);
+        if (isANode(el)) {
+          this.ydoc.getMap(key).get(el.id).set('label', el.data.label);
+          this.ydoc.getMap(key).get(el.id).set('type', el.type);
+          this.ydoc.getMap(key).get(el.id).set('x', el.position.x);
+          this.ydoc.getMap(key).get(el.id).set('y', el.position.y);
+          this.ydoc.getMap(key).get(el.id).set('backgroundColor', el.style.backgroundColor);
+          this.ydoc.getMap(key).get(el.id).set('borderColor', el.style.borderColor);
+        } else {
+          this.ydoc.getMap(key).get(el.id).set('source', el.source);
+          this.ydoc.getMap(key).get(el.id).set('target', el.target);
+        }
       })
     });
   }
@@ -138,31 +163,65 @@ export default class Ymerge {
         peers.push(value);
       })
       callback({
-        elements: this._mapped(this.ydoc.getMap(ELEMENTS_KEY)),
+        elements: this.getElements(),
         peers
       })
     })
     this.provider.on('synced', () => {
       const myData = Array.from(Object.values(this.provider.awareness.getLocalState()));
       callback({
-        elements: this._mapped(this.ydoc.getMap(ELEMENTS_KEY)),
+        elements: this.getElements(),
         peers: myData
       })
     })
+  }
+
+  getElements() {
+    console.log('[getElements]');
+    const elementArrCopy = [];
+    const elementsYmap = this.ydoc.getMap(ELEMENTS_KEY);
+    elementsYmap.forEach((el,key) => {
+      const id = el.get('id');
+      let newElement;
+      if (id.startsWith('node')) {
+        const label = el.get('label');
+        const x = el.get('x');
+        const y = el.get('y');
+        const backgroundColor = el.get('backgroundColor');
+        const borderColor = el.get('borderColor');
+        newElement = {
+          id,
+          type: 'default',
+          data: {label},
+          position: {x,y},
+          style: {backgroundColor,borderColor}
+        }
+      } else {
+        const source = el.get('source');
+        const target = el.get('target');
+        newElement = {
+          id, source,target
+        }
+      }
+
+      elementArrCopy.push(newElement);
+    });
+    console.log('after mapped: ', elementArrCopy);
+    return elementArrCopy;
   }
 
   _watch(callback) {
     this.ydoc.on('update', () => {
       console.log('[Ymerge UPDATE]');
       callback(state => ({
-        elements: this._mapped(this.ydoc.getMap(ELEMENTS_KEY)),
+        elements: this.getElements(),
         peers: state.peers
       }));
     });
 
-    this.ydoc.getMap(ELEMENTS_KEY).observe(event => {
+    this.ydoc.getMap(ELEMENTS_KEY).observeDeep(event => {
       console.log('[Ymerge] Element observe');
-      console.log(event.changes.keys);
+      console.log(event);
     });
 
     this.ydoc.on('destroy', () => {
@@ -211,15 +270,6 @@ export default class Ymerge {
       }
     }
     return null;
-  }
-
-  _mapped(ymapInstance) {
-    if (!ymapInstance) return [];
-    const valArr = [];
-    ymapInstance.forEach((value, key, map) => {
-      valArr.push(value);
-    });
-    return valArr;
   }
 
 }
