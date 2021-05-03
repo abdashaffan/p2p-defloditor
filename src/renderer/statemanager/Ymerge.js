@@ -9,7 +9,6 @@ import {initialElements} from "../starter";
 
 
 export const ELEMENTS_KEY = 'elements';
-export const PEERS_KEY = 'peers';
 // Run 'npm run y-webrtc-signal' (check package.json for the exact command)
 // to start a custom local signaling server if you run this project on your local,
 // In production, don't provide signaling opts since the yjs maintainer
@@ -48,7 +47,6 @@ export default class Ymerge {
   }
 
   deleteData(key, idArr) {
-    console.log('remove list: ', idArr);
     this.ydoc.transact(() => {
       idArr.forEach(id => {
         this.ydoc.getMap(key).delete(id);
@@ -136,7 +134,6 @@ export default class Ymerge {
         const value = d[key];
         peers.push(value);
       })
-      console.log('[watchPeerConnection] peers: ', peers);
       callback({
         elements: this._mapped(this.ydoc.getMap(ELEMENTS_KEY)),
         peers
@@ -159,12 +156,19 @@ export default class Ymerge {
         peers: state.peers
       }));
     });
+
+    this.ydoc.getMap(ELEMENTS_KEY).observe(event => {
+      console.log('[Ymerge] Element observe');
+      console.log(event.changes);
+    });
+
     this.ydoc.on('destroy', () => {
       console.log('[YDOC DESTROY]');
       this.provider.awareness.destroy();
       this.ydoc = null;
       this.provider = null;
     });
+
   }
 
   _addSelfIntoPeerList() {
