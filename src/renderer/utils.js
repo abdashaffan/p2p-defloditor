@@ -39,3 +39,11 @@ export const isANode = (el) => {
   if (!el) return false;
   return el.id.startsWith('node');
 }
+
+export const getAnnotatedPeers = (peers, me) => {
+  if (peers.length < 1) return peers;
+  return peers.map(peer => {
+    if (peer.selfId !== me.selfId) return peer;
+    return {...peer, isMe: true}
+  })
+}

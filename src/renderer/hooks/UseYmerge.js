@@ -1,20 +1,16 @@
 import {useState} from "react";
 import {v4 as uuidv4} from 'uuid';
-import Hypermerge from "./statemanager/Hypermerge";
-import Ymerge from "./statemanager/Ymerge";
+import Ymerge, {ELEMENTS_KEY} from "../statemanager/Ymerge";
 
 // Only use on the root component
-export const useEntityManager = (withPersistence, moduleName) => {
+export const useYmerge = () => {
 
   const [localState, setLocalState] = useState({
     elements: [],
     peers: []
   });
 
-  const [syncModule] = useState(() => moduleName === "HYPERMERGE" ?
-      new Hypermerge(setLocalState, withPersistence) :
-    new Ymerge(setLocalState,withPersistence)
-  );
+  const [syncModule] = useState(() => new Ymerge(setLocalState));
 
 
   const addNewShape = (el) => {
@@ -33,56 +29,48 @@ export const useEntityManager = (withPersistence, moduleName) => {
         style: {}
       }
     }
-    syncModule.update(state => {
-      state.elements[newNode.id] = newNode;
-    });
+    syncModule.addData(ELEMENTS_KEY,[newNode]);
   }
 
   const addNewEdge = (params) => {
     const srcId = params.source;
     const targetId = params.target;
-
-    return syncModule.update(state => {
-      // Only add edge if the source and the target node are still exist.
-      if (state.elements[srcId] && state.elements[targetId]) {
-        const newEdge = {
-          id: `edge:${uuidv4()}`,
-          source: srcId,
-          target: targetId
-        }
-        state.elements[newEdge.id] = newEdge;
-      }
-    });
+    const newEdge = {
+      id: `edge:${uuidv4()}`,
+      source: srcId,
+      target: targetId
+    }
+    return syncModule.addData(ELEMENTS_KEY,[newEdge]);
   }
 
   const updateNode = (element) => {
-    return syncModule.update(state => {
-      state.elements[element.id] = element;
-    })
+    return syncModule.updateData(ELEMENTS_KEY,[element]);
   }
 
   const updateEdgeConnection = (oldEdge, newConnection) => {
-    return syncModule.update(state => {
-      if (state.elements[newConnection.source] && state.elements[newConnection.target]) {
-        state.elements[oldEdge.id].source = newConnection.source;
-        state.elements[oldEdge.id].target = newConnection.target;
-      }
-    });
+    const newEdge = {
+      id: oldEdge.id,
+      source: newConnection.source,
+      target: newConnection.target
+    }
+    return syncModule.updateData(ELEMENTS_KEY,[newEdge]);
   }
 
   const deleteShape = (elementsToRemove) => {
     // Original react-flow API supports deleting multiple apps at once,
     // but this app only supports one shape per deletion.
     const idToBeRemoved = elementsToRemove[0].id;
-    return syncModule.update(state => {
-      Object.keys(state.elements).forEach(id => {
-        const el = state.elements[id];
-        // Remove the node and all connected edges to said node.
+    const processUpdate = () => {
+      const lastUpdateElements = localState.elements;
+      const connectedElements = [];
+      lastUpdateElements.forEach(el => {
         if (el.id === idToBeRemoved || el.source === idToBeRemoved || el.target === idToBeRemoved) {
-          delete state.elements[id];
+          connectedElements.push(el.id);
         }
-      })
-    });
+      });
+      syncModule.deleteData(ELEMENTS_KEY, [...connectedElements, idToBeRemoved]);
+    }
+    return processUpdate();
   }
 
   const validateUrl = (url) => {

@@ -22,7 +22,7 @@ function createMainWindow() {
 
   if (env.isDevelopment) {
     url = `http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}`
-    // initDevTools(window, true)
+    initDevTools(window, true)
   } else {
     url = formatUrl({
       pathname: path.join(__dirname, 'index.html'),

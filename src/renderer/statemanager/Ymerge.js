@@ -10,7 +10,6 @@ import {initialElements} from "../starter";
 
 export const ELEMENTS_KEY = 'elements';
 export const PEERS_KEY = 'peers';
-const ROOT_KEY = 'root';
 // Run 'npm run y-webrtc-signal' (check package.json for the exact command)
 // to start a custom local signaling server if you run this project on your local,
 // In production, don't provide signaling opts since the yjs maintainer
@@ -31,14 +30,29 @@ export default class Ymerge {
     this._setup(url, callback);
   }
 
-  update(handle) {
+  addData(key, dataArr) {
     this.ydoc.transact(() => {
-      const elements = this.state.get(ELEMENTS_KEY);
-      const peers = this.state.get(PEERS_KEY);
-      const data = {elements, peers};
-      handle(data);
-      this.state.set(ELEMENTS_KEY, data.elements);
-      this.state.set(PEERS_KEY, data.peers);
+      dataArr.forEach(data => {
+        this.ydoc.getMap(key).set(data.id, data);
+      })
+    });
+  }
+
+  updateData(key, dataArr) {
+    this.ydoc.transact(() => {
+      dataArr.forEach(data => {
+        const idf = data.id || data.selfId;
+        this.ydoc.getMap(key).set(idf, data);
+      })
+    });
+  }
+
+  deleteData(key, idArr) {
+    console.log('remove list: ', idArr);
+    this.ydoc.transact(() => {
+      idArr.forEach(id => {
+        this.ydoc.getMap(key).delete(id);
+      })
     });
   }
 
@@ -74,12 +88,8 @@ export default class Ymerge {
       this.ydoc.destroy();
     }
     this.ydoc = new Y.Doc();
-    this.state = this.ydoc.getMap(ROOT_KEY);
-    this.update(state => {
-      // Reset elements.
-      state.elements = initialElements;
-      state.peers = {};
-    });
+    this.addData(ELEMENTS_KEY, [initialElements['node:1']]);
+    this.addData(ELEMENTS_KEY, [initialElements['node:2']]);
   }
 
   _initPeerConnection(callback) {
@@ -116,40 +126,43 @@ export default class Ymerge {
   }
 
   _watchPeerConnection(callback) {
-    this.provider.awareness.on('update', ({added,updated,removed}) => {
+    this.provider.awareness.on('update', ({added, updated, removed}) => {
       console.log('[AWARENESS UPDATE]');
       // Change the map key from increment number into clientID.
       const data = Array.from(this.provider.awareness.getStates().values());
-      const peers = {};
+      const peers = [];
       data.forEach(d => {
         const key = Object.keys(d)[0];
         const value = d[key];
-        peers[key] = value;
+        peers.push(value);
       })
-      this.state.set(PEERS_KEY, peers);
-      if (callback) {
-        callback({
-          elements: this._mapped(this.state.get(ELEMENTS_KEY)),
-          peers: this._mapped(this.state.get(PEERS_KEY)),
-        })
-      }
+      console.log('[watchPeerConnection] peers: ', peers);
+      callback({
+        elements: this._mapped(this.ydoc.getMap(ELEMENTS_KEY)),
+        peers
+      })
+    })
+    this.provider.on('synced', () => {
+      const myData = Array.from(Object.values(this.provider.awareness.getLocalState()));
+      callback({
+        elements: this._mapped(this.ydoc.getMap(ELEMENTS_KEY)),
+        peers: myData
+      })
     })
   }
 
   _watch(callback) {
     this.ydoc.on('update', () => {
       console.log('[Ymerge UPDATE]');
-      if (callback) {
-        const elements = this._mapped(this.state.get(ELEMENTS_KEY));
-        const peers = this._mapped(this.state.get(PEERS_KEY));
-        callback({elements, peers});
-      }
+      callback(state => ({
+        elements: this._mapped(this.ydoc.getMap(ELEMENTS_KEY)),
+        peers: state.peers
+      }));
     });
     this.ydoc.on('destroy', () => {
       console.log('[YDOC DESTROY]');
       this.provider.awareness.destroy();
       this.ydoc = null;
-      this.state = null;
       this.provider = null;
     });
   }
@@ -193,9 +206,13 @@ export default class Ymerge {
     return null;
   }
 
-  _mapped(obj) {
-    if (!obj) return [];
-    return Object.keys(obj).map(key => obj[key]);
+  _mapped(ymapInstance) {
+    if (!ymapInstance) return [];
+    const valArr = [];
+    ymapInstance.forEach((value, key, map) => {
+      valArr.push(value);
+    });
+    return valArr;
   }
 
 }
