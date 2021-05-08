@@ -29,7 +29,7 @@ export const useYmerge = () => {
         style: {}
       }
     }
-    syncModule.addData(ELEMENTS_KEY,[newNode]);
+    syncModule.addElement(ELEMENTS_KEY,[newNode]);
   }
 
   const addNewEdge = (params) => {
@@ -40,11 +40,11 @@ export const useYmerge = () => {
       source: srcId,
       target: targetId
     }
-    return syncModule.addData(ELEMENTS_KEY,[newEdge]);
+    return syncModule.addElement(ELEMENTS_KEY,[newEdge]);
   }
 
   const updateNode = (element) => {
-    return syncModule.updateData(ELEMENTS_KEY,[element]);
+    return syncModule.updateElement(ELEMENTS_KEY,[element]);
   }
 
   const updateEdgeConnection = (oldEdge, newConnection) => {
@@ -53,7 +53,7 @@ export const useYmerge = () => {
       source: newConnection.source,
       target: newConnection.target
     }
-    return syncModule.updateData(ELEMENTS_KEY,[newEdge]);
+    return syncModule.updateElement(ELEMENTS_KEY,[newEdge]);
   }
 
   const deleteShape = (elementsToRemove) => {
@@ -68,7 +68,7 @@ export const useYmerge = () => {
           connectedElements.push(el.id);
         }
       });
-      syncModule.deleteData(ELEMENTS_KEY, [...connectedElements, idToBeRemoved]);
+      syncModule.deleteElement(ELEMENTS_KEY, [...connectedElements, idToBeRemoved]);
     }
     return processUpdate();
   }

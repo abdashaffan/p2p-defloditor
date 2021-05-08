@@ -40,7 +40,7 @@ export default class Ymerge {
     this._setup(url, callback, true);
   }
 
-  addData(key, elArr) {
+  addElement(key, elArr) {
     this.ydoc.transact(() => {
       elArr.forEach(el => {
         let newEl = new Y.Map();
@@ -61,7 +61,7 @@ export default class Ymerge {
     });
   }
 
-  updateData(key, elArr) {
+  updateElement(key, elArr) {
     this.ydoc.transact(() => {
       elArr.forEach(el => {
         let updatable;
@@ -84,7 +84,7 @@ export default class Ymerge {
     });
   }
 
-  deleteData(key, idArr) {
+  deleteElement(key, idArr) {
     this.ydoc.transact(() => {
       idArr.forEach(id => {
         this.ydoc.getMap(key).delete(id);
@@ -125,8 +125,8 @@ export default class Ymerge {
     }
     this.ydoc = new Y.Doc();
     if (usingStarter) {
-      this.addData(ELEMENTS_KEY, [initialElements['node:1']]);
-      this.addData(ELEMENTS_KEY, [initialElements['node:2']]);
+      this.addElement(ELEMENTS_KEY, [initialElements['node:1']]);
+      this.addElement(ELEMENTS_KEY, [initialElements['node:2']]);
     }
   }
 
