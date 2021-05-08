@@ -131,15 +131,15 @@ export default class Ymerge {
   }
 
   _initPeerConnection(callback) {
-    // this.provider = new WebrtcProvider(
-    //   this.url,
-    //   this.ydoc
-    // );
     this.provider = new WebrtcProvider(
       this.url,
-      this.ydoc,
-      customOpts
+      this.ydoc
     );
+    // this.provider = new WebrtcProvider(
+    //   this.url,
+    //   this.ydoc,
+    //   customOpts
+    // );
     if (!this.user) {
       this.user = this._createUser();
     } else {
@@ -236,7 +236,7 @@ export default class Ymerge {
 
     this.ydoc.on('destroy', () => {
       console.log('[YDOC DESTROY]');
-      this.provider.awareness.destroy();
+      this.provider.destroy();
       this.ydoc = null;
       this.provider = null;
     });
