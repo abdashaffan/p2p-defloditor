@@ -48,9 +48,21 @@ export default class Hypermerge {
         });
         for (let i = 0; i < updatable.length; i++) {
           const propertyName = updatableKey[i];
-          let lastVal = curr[propertyName];
+          let lastVal;
+          if (propertyName === ITEM.BORDER || propertyName === ITEM.BACKGROUND) {
+            lastVal = curr['style'][propertyName];
+          } else {
+            lastVal = curr[propertyName];
+          }
           const newVal = updatable[i];
-          if (lastVal && newVal !== lastVal) {
+          let changed = false;
+          if (propertyName === ITEM.POSITION) {
+            changed = (lastVal.x !== newVal.x || lastVal.y !== newVal.y);
+          } else {
+            changed = (newVal !== lastVal);
+          }
+          if (changed) {
+            console.log(`${propertyName} updated`);
             if (propertyName === ITEM.BORDER || propertyName === ITEM.BACKGROUND) {
               state.elements[el.id]['style'][propertyName] = newVal;
             } else {
@@ -71,7 +83,7 @@ export default class Hypermerge {
   }
 
   update(handle) {
-      this.repo.change(this.url, (state) => {
+    this.repo.change(this.url, (state) => {
       handle(state);
       this._removeOrphanedEdge(state);
     });
@@ -104,7 +116,6 @@ export default class Hypermerge {
 
   _watch(callback) {
     this.repo.watch(this.url, (state) => {
-      console.log('[hypermerge watch triggered]');
       this.doc = state;
       if (callback) {
         callback(this._mapped(state));
@@ -209,7 +220,6 @@ export default class Hypermerge {
     Object.keys(state.peers).forEach(key => {
       peers.push(_mapToLocalRecursive(state.peers[key]));
     });
-    console.log("updated local state: ", elements);
     return {elements, peers};
   }
 }
