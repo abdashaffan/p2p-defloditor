@@ -9,6 +9,17 @@ import {initialElements} from "../starter";
 
 
 export const ELEMENTS_KEY = 'elements';
+const ITEM = Object.freeze({
+  ID: 'id',
+  TYPE: 'type',
+  LABEL: 'label',
+  SHAPE: 'shape',
+  POSITION: 'position',
+  BACKGROUND: 'backgroundColor',
+  BORDER: 'borderColor',
+  SOURCE: 'source',
+  TARGET: 'target'
+});
 // Run 'npm run y-webrtc-signal' (check package.json for the exact command)
 // to start a custom local signaling server if you run this project on your local,
 // In production, don't provide signaling opts since the yjs maintainer
@@ -32,23 +43,20 @@ export default class Ymerge {
   addData(key, elArr) {
     this.ydoc.transact(() => {
       elArr.forEach(el => {
+        let newEl = new Y.Map();
         if (isANode(el)) {
-          const node = new Y.Map();
-          node.set('id', el.id);
-          node.set('label', el.data.label);
-          node.set('type', el.type);
-          node.set('x', el.position.x);
-          node.set('y', el.position.y);
-          node.set('backgroundColor', el.style.backgroundColor);
-          node.set('borderColor', el.style.borderColor);
-          this.ydoc.getMap(key).set(el.id, node);
+          newEl.set(ITEM.ID, el.id);
+          newEl.set(ITEM.LABEL, el.data.label);
+          newEl.set(ITEM.TYPE, el.type);
+          newEl.set(ITEM.POSITION, el.position);
+          newEl.set(ITEM.BACKGROUND, el.style.backgroundColor);
+          newEl.set(ITEM.BORDER, el.style.borderColor);
         } else {
-          const edge = new Y.Map();
-          edge.set('id', el.id);
-          edge.set('source', el.source);
-          edge.set('target', el.target);
-          this.ydoc.getMap(key).set(el.id, edge);
+          newEl.set(ITEM.ID, el.id);
+          newEl.set(ITEM.SOURCE, el.source);
+          newEl.set(ITEM.TARGET, el.target);
         }
+        this.ydoc.getMap(key).set(el.id, newEl);
       })
     });
   }
@@ -56,17 +64,21 @@ export default class Ymerge {
   updateData(key, elArr) {
     this.ydoc.transact(() => {
       elArr.forEach(el => {
-        this.ydoc.getMap(key).get(el.id).set('id', el.id);
+        let updatable;
+        let updatableKey;
         if (isANode(el)) {
-          this.ydoc.getMap(key).get(el.id).set('label', el.data.label);
-          this.ydoc.getMap(key).get(el.id).set('type', el.type);
-          this.ydoc.getMap(key).get(el.id).set('x', el.position.x);
-          this.ydoc.getMap(key).get(el.id).set('y', el.position.y);
-          this.ydoc.getMap(key).get(el.id).set('backgroundColor', el.style.backgroundColor);
-          this.ydoc.getMap(key).get(el.id).set('borderColor', el.style.borderColor);
+          updatable = [el.position, el.style.borderColor, el.style.backgroundColor];
+          updatableKey = [ITEM.POSITION, ITEM.BORDER, ITEM.BACKGROUND];
         } else {
-          this.ydoc.getMap(key).get(el.id).set('source', el.source);
-          this.ydoc.getMap(key).get(el.id).set('target', el.target);
+          updatable = [el.source, el.target];
+          updatableKey = [ITEM.SOURCE, ITEM.TARGET];
+        }
+        for (let i = 0; i < updatable.length; i++) {
+          const lastVal = this.ydoc.getMap(key).get(el.id).get(updatableKey[i]);
+          const newVal = updatable[i];
+          if (newVal !== lastVal) {
+            this.ydoc.getMap(key).get(el.id).set(updatableKey[i], newVal);
+          }
         }
       })
     });
@@ -119,15 +131,15 @@ export default class Ymerge {
   }
 
   _initPeerConnection(callback) {
-    this.provider = new WebrtcProvider(
-      this.url,
-      this.ydoc
-    );
     // this.provider = new WebrtcProvider(
     //   this.url,
-    //   this.ydoc,
-    //   customOpts
+    //   this.ydoc
     // );
+    this.provider = new WebrtcProvider(
+      this.url,
+      this.ydoc,
+      customOpts
+    );
     if (!this.user) {
       this.user = this._createUser();
     } else {
@@ -154,6 +166,9 @@ export default class Ymerge {
   _watchPeerConnection(callback) {
     this.provider.awareness.on('update', ({added, updated, removed}) => {
       console.log('[AWARENESS UPDATE]');
+      console.log('added', added);
+      console.log('updated', updated);
+      console.log('removed', removed);
       // Change the map key from increment number into clientID.
       const data = Array.from(this.provider.awareness.getStates().values());
       const peers = [];
@@ -177,36 +192,31 @@ export default class Ymerge {
   }
 
   getElements() {
-    console.log('[getElements]');
     const elementArrCopy = [];
     const elementsYmap = this.ydoc.getMap(ELEMENTS_KEY);
-    elementsYmap.forEach((el,key) => {
-      const id = el.get('id');
+    elementsYmap.forEach((el, key) => {
+      const deepCopy = JSON.parse(JSON.stringify(el));
       let newElement;
-      if (id.startsWith('node')) {
-        const label = el.get('label');
-        const x = el.get('x');
-        const y = el.get('y');
-        const backgroundColor = el.get('backgroundColor');
-        const borderColor = el.get('borderColor');
+      if (deepCopy[ITEM.ID].startsWith('node')) {
         newElement = {
-          id,
-          type: 'default',
-          data: {label},
-          position: {x,y},
-          style: {backgroundColor,borderColor}
+          id: deepCopy[ITEM.ID],
+          type: deepCopy[ITEM.TYPE],
+          data: {label: deepCopy[ITEM.LABEL]},
+          position: deepCopy[ITEM.POSITION],
+          style: {
+            backgroundColor: deepCopy[ITEM.BACKGROUND],
+            borderColor: deepCopy[ITEM.BORDER]
+          }
         }
       } else {
-        const source = el.get('source');
-        const target = el.get('target');
         newElement = {
-          id, source,target
+          id: deepCopy[ITEM.ID],
+          source: deepCopy[ITEM.SOURCE],
+          target: deepCopy[ITEM.TARGET]
         }
       }
-
       elementArrCopy.push(newElement);
     });
-    console.log('after mapped: ', elementArrCopy);
     return elementArrCopy;
   }
 
