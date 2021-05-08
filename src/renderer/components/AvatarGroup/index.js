@@ -5,11 +5,6 @@ import Tooltip from '@material-ui/core/Tooltip';
 
 
 export default function CustomAvatarGroup(props) {
-  // eslint-disable-next-line react/prop-types
-  if (props.peers) {
-    // eslint-disable-next-line react/prop-types
-    console.log('peers: ',props.peers);
-  }
   return (
     <AvatarGroup max={5}>
       {
