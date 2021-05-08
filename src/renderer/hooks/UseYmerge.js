@@ -1,6 +1,6 @@
 import {useState} from "react";
 import {v4 as uuidv4} from 'uuid';
-import Ymerge, {ELEMENTS_KEY} from "../statemanager/Ymerge";
+import Ymerge from "../statemanager/Ymerge";
 
 // Only use on the root component
 export const useYmerge = () => {
@@ -29,7 +29,7 @@ export const useYmerge = () => {
         style: {}
       }
     }
-    syncModule.addElement(ELEMENTS_KEY,[newNode]);
+    syncModule.addElement([newNode]);
   }
 
   const addNewEdge = (params) => {
@@ -40,11 +40,11 @@ export const useYmerge = () => {
       source: srcId,
       target: targetId
     }
-    return syncModule.addElement(ELEMENTS_KEY,[newEdge]);
+    return syncModule.addElement([newEdge]);
   }
 
   const updateNode = (element) => {
-    return syncModule.updateElement(ELEMENTS_KEY,[element]);
+    return syncModule.updateElement([element]);
   }
 
   const updateEdgeConnection = (oldEdge, newConnection) => {
@@ -53,7 +53,7 @@ export const useYmerge = () => {
       source: newConnection.source,
       target: newConnection.target
     }
-    return syncModule.updateElement(ELEMENTS_KEY,[newEdge]);
+    return syncModule.updateElement([newEdge]);
   }
 
   const deleteShape = (elementsToRemove) => {
@@ -68,7 +68,7 @@ export const useYmerge = () => {
           connectedElements.push(el.id);
         }
       });
-      syncModule.deleteElement(ELEMENTS_KEY, [...connectedElements, idToBeRemoved]);
+      syncModule.deleteElement( [...connectedElements, idToBeRemoved]);
     }
     return processUpdate();
   }

@@ -40,7 +40,7 @@ export default class Ymerge {
     this._setup(url, callback, true);
   }
 
-  addElement(key, elArr) {
+  addElement(elArr) {
     this.ydoc.transact(() => {
       elArr.forEach(el => {
         let newEl = new Y.Map();
@@ -56,12 +56,12 @@ export default class Ymerge {
           newEl.set(ITEM.SOURCE, el.source);
           newEl.set(ITEM.TARGET, el.target);
         }
-        this.ydoc.getMap(key).set(el.id, newEl);
+        this.ydoc.getMap(ELEMENTS_KEY).set(el.id, newEl);
       })
     });
   }
 
-  updateElement(key, elArr) {
+  updateElement(elArr) {
     this.ydoc.transact(() => {
       elArr.forEach(el => {
         let updatable;
@@ -74,20 +74,20 @@ export default class Ymerge {
           updatableKey = [ITEM.SOURCE, ITEM.TARGET];
         }
         for (let i = 0; i < updatable.length; i++) {
-          const lastVal = this.ydoc.getMap(key).get(el.id).get(updatableKey[i]);
+          const lastVal = this.ydoc.getMap(ELEMENTS_KEY).get(el.id).get(updatableKey[i]);
           const newVal = updatable[i];
           if (newVal !== lastVal) {
-            this.ydoc.getMap(key).get(el.id).set(updatableKey[i], newVal);
+            this.ydoc.getMap(ELEMENTS_KEY).get(el.id).set(updatableKey[i], newVal);
           }
         }
       })
     });
   }
 
-  deleteElement(key, idArr) {
+  deleteElement(idArr) {
     this.ydoc.transact(() => {
       idArr.forEach(id => {
-        this.ydoc.getMap(key).delete(id);
+        this.ydoc.getMap(ELEMENTS_KEY).delete(id);
       })
     });
   }
