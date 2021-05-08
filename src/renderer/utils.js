@@ -7,6 +7,18 @@ export const entityEnum = Object.freeze({
   edge: 3
 })
 
+export const ITEM = Object.freeze({
+  ID: 'id',
+  TYPE: 'type',
+  LABEL: 'label',
+  SHAPE: 'shape',
+  POSITION: 'position',
+  BACKGROUND: 'backgroundColor',
+  BORDER: 'borderColor',
+  SOURCE: 'source',
+  TARGET: 'target'
+});
+
 export const generateId = (entity) => {
   switch (entity) {
     case entityEnum.user:

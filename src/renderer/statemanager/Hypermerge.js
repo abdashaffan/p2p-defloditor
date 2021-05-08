@@ -2,7 +2,7 @@ import Hyperswarm from "hyperswarm";
 import {Repo} from "hypermerge";
 import {initialElements} from "../starter";
 import {validateDocURL} from "hypermerge/dist/Metadata";
-import {getAnonymousIdentifier, getRandomColor} from "../utils";
+import {getAnonymousIdentifier, getRandomColor, isANode, ITEM} from "../utils";
 
 export default class Hypermerge {
 
@@ -22,8 +22,56 @@ export default class Hypermerge {
     this._watchPeerConnection();
   }
 
-  update(handle) {
+  addElement(elArr) {
     this.repo.change(this.url, (state) => {
+      elArr.forEach(newEl => {
+        state.elements[newEl.id] = newEl;
+      });
+    });
+  }
+
+  updateElement(elArr) {
+    this.repo.change(this.url, (state) => {
+      elArr.forEach(el => {
+        let updatable;
+        let updatableKey;
+        if (isANode(el)) {
+          updatable = [el.position, el.style.borderColor, el.style.backgroundColor];
+          updatableKey = [ITEM.POSITION, ITEM.BORDER, ITEM.BACKGROUND];
+        } else {
+          updatable = [el.source, el.target];
+          updatableKey = [ITEM.SOURCE, ITEM.TARGET];
+        }
+        let curr;
+        this.repo.doc(this.url, doc => {
+          curr = JSON.parse(JSON.stringify(doc.elements[el.id]));
+        });
+        for (let i = 0; i < updatable.length; i++) {
+          const propertyName = updatableKey[i];
+          let lastVal = curr[propertyName];
+          const newVal = updatable[i];
+          if (lastVal && newVal !== lastVal) {
+            if (propertyName === ITEM.BORDER || propertyName === ITEM.BACKGROUND) {
+              state.elements[el.id]['style'][propertyName] = newVal;
+            } else {
+              state.elements[el.id][propertyName] = newVal;
+            }
+          }
+        }
+      })
+    });
+  }
+
+  deleteElement(idArr) {
+    this.repo.change(this.url, (state) => {
+      idArr.forEach(id => {
+        delete state.elements[id];
+      })
+    })
+  }
+
+  update(handle) {
+      this.repo.change(this.url, (state) => {
       handle(state);
       this._removeOrphanedEdge(state);
     });
@@ -90,7 +138,6 @@ export default class Hypermerge {
 
   _addSelfIntoPeerList() {
     this.update(state => {
-      console.log('[add self into peer list]');
       state.peers[this.user.selfId] = this.user;
     });
   }
@@ -162,7 +209,7 @@ export default class Hypermerge {
     Object.keys(state.peers).forEach(key => {
       peers.push(_mapToLocalRecursive(state.peers[key]));
     });
-    console.log("updated local state: ", peers);
+    console.log("updated local state: ", elements);
     return {elements, peers};
   }
 }

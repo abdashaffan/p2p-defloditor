@@ -2,24 +2,13 @@ import * as Y from 'yjs';
 import {v4 as uuidv4} from 'uuid';
 import {WebrtcProvider} from 'y-webrtc';
 import {IndexeddbPersistence} from 'y-indexeddb';
-import {getAnonymousIdentifier, getRandomColor, isANode} from "../utils";
+import {getAnonymousIdentifier, getRandomColor, isANode, ITEM} from "../utils";
 import fs from "fs";
 import env from "../../common/env";
 import {initialElements} from "../starter";
 
 
 export const ELEMENTS_KEY = 'elements';
-const ITEM = Object.freeze({
-  ID: 'id',
-  TYPE: 'type',
-  LABEL: 'label',
-  SHAPE: 'shape',
-  POSITION: 'position',
-  BACKGROUND: 'backgroundColor',
-  BORDER: 'borderColor',
-  SOURCE: 'source',
-  TARGET: 'target'
-});
 // Run 'npm run y-webrtc-signal' (check package.json for the exact command)
 // to start a custom local signaling server if you run this project on your local,
 // In production, don't provide signaling opts since the yjs maintainer
