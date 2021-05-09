@@ -1,15 +1,16 @@
 import {useState} from "react";
 import {v4 as uuidv4} from 'uuid';
 import Hypermerge from "../statemanager/Hypermerge";
+import Ymerge from "../statemanager/Ymerge";
 
 // Only use on the root component
-export const useHypermerge = () => {
+export const useEntityManager = (module) => {
   const [localState, setLocalState] = useState({
     elements: [],
     peers: []
   });
 
-  const [syncModule] = useState(() => new Hypermerge(setLocalState));
+  const [syncModule] = useState(() => module === "HYPERMERGE" ? new Hypermerge(setLocalState): new Ymerge(setLocalState));
 
 
   const addNewShape = (el) => {
