@@ -86,6 +86,16 @@ export const useEntityManager = (module) => {
 
   const getUser = () => syncModule.getMyInfo();
 
+  const isOnline = () => syncModule.isOnline();
+
+  const simulateOnline = () => {
+    syncModule.goOnline();
+  }
+
+  const simulateOffline = () => {
+    syncModule.goOffline();
+  }
+
   return {
     addNewShape,
     addNewEdge,
@@ -96,6 +106,9 @@ export const useEntityManager = (module) => {
     validateUrl,
     getUrl,
     getUser,
+    isOnline: isOnline,
+    simulateOnline,
+    simulateOffline,
     elements: localState.elements,
     peers: localState.peers
   };

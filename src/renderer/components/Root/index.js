@@ -11,6 +11,7 @@ import UrlInput from "../Input";
 import Canvas from "../Canvas";
 import {LinearProgress} from "@material-ui/core";
 import {useEntityManager} from "../../hooks/UseEntityManager";
+import ActionButton from "../ActionButton";
 
 
 const module = env.module;
@@ -27,8 +28,14 @@ function Root() {
     updateUrl,
     validateUrl,
     getUrl,
-    getUser
+    getUser,
+    isOnline,
+    simulateOffline,
+    simulateOnline
   } = useEntityManager(module);
+
+  console.log('peers root:');
+  console.log(peers);
 
   if (peers && peers.length > 0) {
     return (
@@ -42,7 +49,7 @@ function Root() {
             <Col className="d-sm-none d-md-block">
               <Row>
                 <Col className="d-flex align-items-center justify-content-end">
-                  <CustomAvatarGroup peers={getAnnotatedPeers(peers,getUser())}/>
+                  <CustomAvatarGroup peers={getAnnotatedPeers(peers, getUser())}/>
                 </Col>
                 <Col xs={8}>
                   <UrlInput handleUrlUpdate={updateUrl} validateUrl={validateUrl}/>
@@ -50,14 +57,19 @@ function Root() {
               </Row>
             </Col>
           </Row>
+
           <Row className="app-bottom">
             <Canvas
               elements={elements}
+              isOnline={isOnline()}
               handleRemove={deleteShape}
               handleAddEdge={addNewEdge}
               handleNodeUpdate={updateNode}
               handleEdgeUpdate={updateEdgeConnection}
               handleAddNode={addNewShape}
+              handleGoOnline={simulateOnline}
+              handleGoOffline={simulateOffline}
+              showConnectionToggle={module !== "HYPERMERGE"}
             />
           </Row>
         </Container>

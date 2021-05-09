@@ -22,6 +22,18 @@ export default class Hypermerge {
     this._watchPeerConnection();
   }
 
+  isOnline() {
+    // TODO: TBD
+  }
+
+  goOnline() {
+    // TODO: TBD
+  }
+
+  goOffline() {
+    // TODO: TBD
+  }
+
   addElement(elArr) {
     this.repo.change(this.url, (state) => {
       elArr.forEach(newEl => {

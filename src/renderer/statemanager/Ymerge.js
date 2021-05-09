@@ -97,6 +97,20 @@ export default class Ymerge {
     return this.user;
   }
 
+  isOnline() {
+    return this.provider.shouldConnect;
+  }
+
+  goOnline() {
+    this.provider.connect();
+  }
+
+  goOffline() {
+    if (this.provider.shouldConnect) {
+      this.provider.disconnect();
+    }
+  }
+
   _setup(url, callback, usingStarter) {
     this.url = url;
     this._initMainDocument(usingStarter);
@@ -114,8 +128,8 @@ export default class Ymerge {
     }
     this.ydoc = new Y.Doc();
     if (usingStarter) {
-      this.addElement(ELEMENTS_KEY, [initialElements['node:1']]);
-      this.addElement(ELEMENTS_KEY, [initialElements['node:2']]);
+      this.addElement([initialElements['node:1']]);
+      this.addElement([initialElements['node:2']]);
     }
   }
 

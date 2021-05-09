@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, {useEffect, useState} from 'react';
 import ReactFlow, {MiniMap, Background, Controls} from "react-flow-renderer";
 import {isANode} from "../../utils";
@@ -7,7 +8,18 @@ import ActionButton from "../ActionButton";
 
 
 // eslint-disable-next-line react/prop-types
-function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handleEdgeUpdate, handleAddNode}) {
+function Canvas({
+                  elements,
+                  handleRemove,
+                  handleAddEdge,
+                  handleNodeUpdate,
+                  handleEdgeUpdate,
+                  handleAddNode,
+                  isOnline,
+                  handleGoOffline,
+                  handleGoOnline,
+                  showConnectionToggle
+                }) {
 
   // Differentiate between active and copy shape so the copied shape doesn't
   // change every time user clicks a different shape.
@@ -158,12 +170,22 @@ function Canvas({elements, handleRemove, handleAddEdge, handleNodeUpdate, handle
     <>
       <Col className="left-sidebar px-4 py-4 d-sm-none d-lg-block" xs={0} lg={4} xl={3}>
         <Row className="my-3">
-          <Col xs={12}>
+          <Col xs={6}>
             <ActionButton
               variant="primary"
               handleClick={handleNewShapeAddition}
               label="Add New Node"
             />
+          </Col>
+          <Col xs={6}>
+            {
+              showConnectionToggle &&
+              <ActionButton
+                variant="secondary"
+                handleClick={isOnline ? handleGoOffline : handleGoOnline}
+                label={isOnline ? "Go Offline" : "Go Online"}
+              />
+            }
           </Col>
         </Row>
         <Row className="my-3">
