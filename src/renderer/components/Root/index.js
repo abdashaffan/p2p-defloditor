@@ -11,7 +11,6 @@ import UrlInput from "../Input";
 import Canvas from "../Canvas";
 import {LinearProgress} from "@material-ui/core";
 import {useEntityManager} from "../../hooks/UseEntityManager";
-import ActionButton from "../ActionButton";
 
 
 const module = env.module;
@@ -33,9 +32,6 @@ function Root() {
     simulateOffline,
     simulateOnline
   } = useEntityManager(module);
-
-  console.log('peers root:');
-  console.log(peers);
 
   if (peers && peers.length > 0) {
     return (
