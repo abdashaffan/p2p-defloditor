@@ -102,11 +102,13 @@ export default class Ymerge {
   }
 
   goOnline() {
+    console.log('[SIMULATE ONLINE]');
     this.provider.connect();
   }
 
   goOffline() {
     if (this.provider.shouldConnect) {
+      console.log('[SIMULATE OFFLINE]');
       this.provider.disconnect();
     }
   }
@@ -168,10 +170,6 @@ export default class Ymerge {
 
   _watchPeerConnection(callback) {
     this.provider.awareness.on('update', ({added, updated, removed}) => {
-      console.log('[AWARENESS UPDATE]');
-      console.log('added', added);
-      console.log('updated', updated);
-      console.log('removed', removed);
       // Change the map key from increment number into clientID.
       const data = Array.from(this.provider.awareness.getStates().values());
       const peers = [];
@@ -180,6 +178,13 @@ export default class Ymerge {
         const value = d[key];
         peers.push(value);
       })
+      console.log('[AWARENESS UPDATE]');
+      peers.forEach(p => {
+        console.log(p.name," ", p.selfId);
+      });
+      if (added.length) console.log('added', added);
+      if (updated.length) console.log('updated', updated);
+      if (removed.length) console.log('removed', removed);
       callback({
         elements: this.getElements(),
         peers
@@ -233,8 +238,8 @@ export default class Ymerge {
     });
 
     this.ydoc.getMap(ELEMENTS_KEY).observeDeep(event => {
-      console.log('[Ymerge] Element observe');
-      console.log(event);
+      // console.log('[Ymerge] Element observe');
+      // console.log(event);
     });
 
     this.ydoc.on('destroy', () => {
