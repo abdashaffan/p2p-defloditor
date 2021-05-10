@@ -179,7 +179,7 @@ function Canvas({
           </Col>
           <Col xs={6}>
             {
-              showConnectionToggle &&
+              (showConnectionToggle && show) &&
               <ActionButton
                 variant="secondary"
                 handleClick={isOnline ? handleGoOffline : handleGoOnline}
