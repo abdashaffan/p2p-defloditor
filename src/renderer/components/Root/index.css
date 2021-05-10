@@ -10,3 +10,17 @@
 .left-sidebar {
   border-right: 1px solid #eee;
 }
+
+.offline-info {
+  font-size: 0.9rem;
+  font-style: italic;
+  color: #9e9e9e;
+}
+
+.loader {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

@@ -2,13 +2,13 @@
 import React, {useEffect, useState} from 'react';
 import ReactFlow, {MiniMap, Background, Controls} from "react-flow-renderer";
 import {isANode} from "../../utils";
-import {Col, Row} from "react-bootstrap";
+import {Col, Row, Spinner} from "react-bootstrap";
 import {CompactPicker} from "react-color";
 import ActionButton from "../ActionButton";
 
 
-// eslint-disable-next-line react/prop-types
 function Canvas({
+                  show,
                   elements,
                   handleRemove,
                   handleAddEdge,
@@ -212,19 +212,25 @@ function Canvas({
         </Row>
       </Col>
       <Col className="pb-1 px-0">
-        <ReactFlow
-          elements={elements}
-          onConnect={handleAddEdge}
-          onElementsRemove={handleRemove}
-          onNodeDragStop={handleUpdatePreparation}
-          onEdgeUpdate={handleEdgeUpdate}
-          onLoad={handleOnLoad}
-          onSelectionChange={handleSelectionChange}
-        >
-          <Controls/>
-          <Background color="#aaa" gap={16} variant="lines"/>
-          <MiniMap nodeColor="#333" nodeStrokeWidth={3} nodeBorderRadius={2}/>
-        </ReactFlow>
+        {
+          show ?
+            <ReactFlow
+              elements={elements}
+              onConnect={handleAddEdge}
+              onElementsRemove={handleRemove}
+              onNodeDragStop={handleUpdatePreparation}
+              onEdgeUpdate={handleEdgeUpdate}
+              onLoad={handleOnLoad}
+              onSelectionChange={handleSelectionChange}
+            >
+              <Controls/>
+              <Background color="#aaa" gap={16} variant="lines"/>
+              <MiniMap nodeColor="#333" nodeStrokeWidth={3} nodeBorderRadius={2}/>
+            </ReactFlow> :
+            <div className="loader">
+              <Spinner animation="border" size="xl"/>
+            </div>
+        }
       </Col>
     </>
   );

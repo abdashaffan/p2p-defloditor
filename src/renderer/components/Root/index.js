@@ -33,7 +33,8 @@ function Root() {
     simulateOnline
   } = useEntityManager(module);
 
-  if (peers && peers.length > 0) {
+  // eslint-disable-next-line no-constant-condition
+  if (true) {
     return (
       <ReactFlowProvider>
         <Container fluid>
@@ -45,7 +46,11 @@ function Root() {
             <Col className="d-sm-none d-md-block">
               <Row>
                 <Col className="d-flex align-items-center justify-content-end">
-                  <CustomAvatarGroup peers={getAnnotatedPeers(peers, getUser())}/>
+                  {
+                    isOnline() && peers && peers.length >= 1 ?
+                      <CustomAvatarGroup peers={getAnnotatedPeers(peers, getUser())}/> :
+                      <div className="offline-info">You are offline</div>
+                  }
                 </Col>
                 <Col xs={8}>
                   <UrlInput handleUrlUpdate={updateUrl} validateUrl={validateUrl}/>
@@ -56,6 +61,7 @@ function Root() {
 
           <Row className="app-bottom">
             <Canvas
+              show={peers && peers.length !== 0 || !isOnline()}
               elements={elements}
               isOnline={isOnline()}
               handleRemove={deleteShape}
