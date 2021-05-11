@@ -39,6 +39,7 @@ export default class Hypermerge {
       elArr.forEach(newEl => {
         state.elements[newEl.id] = newEl;
       });
+      this._removeOrphanedEdge(state);
     });
   }
 
@@ -83,6 +84,7 @@ export default class Hypermerge {
           }
         }
       })
+      this._removeOrphanedEdge(state);
     });
   }
 
@@ -91,13 +93,13 @@ export default class Hypermerge {
       idArr.forEach(id => {
         delete state.elements[id];
       })
+      this._removeOrphanedEdge(state);
     })
   }
 
-  update(handle) {
+  updatePeer(handle) {
     this.repo.change(this.url, (state) => {
       handle(state);
-      this._removeOrphanedEdge(state);
     });
   }
 
@@ -160,7 +162,7 @@ export default class Hypermerge {
   }
 
   _addSelfIntoPeerList() {
-    this.update(state => {
+    this.updatePeer(state => {
       state.peers[this.user.selfId] = this.user;
     });
   }
@@ -186,7 +188,7 @@ export default class Hypermerge {
           deletePeersId.push(key);
         }
       })
-      this.update(state => {
+      this.updatePeer(state => {
         deletePeersId.forEach(key => {
           delete state.peers[key];
         })
