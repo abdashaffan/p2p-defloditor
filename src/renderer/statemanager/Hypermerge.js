@@ -162,6 +162,7 @@ export default class Hypermerge {
   }
 
   _addSelfIntoPeerList() {
+    this.user.selfId = this._getSelfId();
     this.updatePeer(state => {
       state.peers[this.user.selfId] = this.user;
     });
@@ -180,6 +181,12 @@ export default class Hypermerge {
   }
 
   _watchPeerConnection() {
+
+    this.swarm.on('connection', (socket, info) => {
+        console.log('CONNECTION triggered');
+        this._addSelfIntoPeerList();
+    });
+
     this.swarm.on('disconnection', (socket, info) => {
       const connectedPeers = this._getPeers();
       const deletePeersId = [];
@@ -187,12 +194,12 @@ export default class Hypermerge {
         if (!value.isConnected) {
           deletePeersId.push(key);
         }
-      })
+      });
       this.updatePeer(state => {
         deletePeersId.forEach(key => {
           delete state.peers[key];
         })
-      })
+      });
     })
   }
 
@@ -234,6 +241,8 @@ export default class Hypermerge {
     Object.keys(state.peers).forEach(key => {
       peers.push(_mapToLocalRecursive(state.peers[key]));
     });
+    console.log('elements:');
+    console.log(elements);
     return {elements, peers};
   }
 }
