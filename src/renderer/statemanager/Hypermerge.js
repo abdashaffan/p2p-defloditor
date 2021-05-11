@@ -11,7 +11,7 @@ export default class Hypermerge {
     this.repo = new Repo({memory: true});
     this.repo.addSwarm(this.swarm, {announce: true});
     this.url = this.repo.create({
-      elements: initialElements,
+      elements: {},
       peers: {}
     });
     this.user = this._createUser();
@@ -20,6 +20,7 @@ export default class Hypermerge {
     this._watch(callback);
     console.log("workspace url: ", this.url);
     this._watchPeerConnection();
+    this.addElement(Object.values(initialElements));
   }
 
   isOnline() {
@@ -36,10 +37,23 @@ export default class Hypermerge {
 
   addElement(elArr) {
     this.repo.change(this.url, (state) => {
-      elArr.forEach(newEl => {
-        state.elements[newEl.id] = newEl;
+      elArr.forEach(el => {
+        state.elements[el.id] = {};
+        if (isANode(el)) {
+          state.elements[el.id][ITEM.ID] = el.id;
+          state.elements[el.id][ITEM.LABEL] = el.data.label;
+          state.elements[el.id][ITEM.TYPE] = el.type;
+          state.elements[el.id][ITEM.POSITION] = el.position;
+          state.elements[el.id][ITEM.BACKGROUND] = el.style.backgroundColor;
+          state.elements[el.id][ITEM.BORDER] = el.style.borderColor;
+        } else {
+          state.elements[el.id][ITEM.ID] = el.id;
+          state.elements[el.id][ITEM.SOURCE] = el.source;
+          state.elements[el.id][ITEM.TARGET] = el.target;
+        }
       });
       this._removeOrphanedEdge(state);
+
     });
   }
 
@@ -61,12 +75,7 @@ export default class Hypermerge {
         });
         for (let i = 0; i < updatable.length; i++) {
           const propertyName = updatableKey[i];
-          let lastVal;
-          if (propertyName === ITEM.BORDER || propertyName === ITEM.BACKGROUND) {
-            lastVal = curr['style'][propertyName];
-          } else {
-            lastVal = curr[propertyName];
-          }
+          const lastVal = curr[propertyName];
           const newVal = updatable[i];
           let changed = false;
           if (propertyName === ITEM.POSITION) {
@@ -76,14 +85,10 @@ export default class Hypermerge {
           }
           if (changed) {
             console.log(`${propertyName} updated`);
-            if (propertyName === ITEM.BORDER || propertyName === ITEM.BACKGROUND) {
-              state.elements[el.id]['style'][propertyName] = newVal;
-            } else {
-              state.elements[el.id][propertyName] = newVal;
-            }
+            state.elements[el.id][propertyName] = newVal;
           }
         }
-      })
+      });
       this._removeOrphanedEdge(state);
     });
   }
@@ -209,40 +214,31 @@ export default class Hypermerge {
 
 
   _mapped(state) {
-    /* _mapped: Map hash-based state from crdt into array-based state (for react-flow API) */
-    const _mapToLocalRecursive = (obj) => {
-      /*
-      * _mapToLocalRecursive:
-      * Object in automerge's crdt state is not really a normal javascript object, it saves data related
-      * to it's internal conflict res. mechanism (_conflicts and _objectId), and this internal data will exist for
-      * every object inside the data (no matter how deeply nested the object is). So, we need to map
-      * every object in the crdt state (for every level) into new object that doesn't include this internal data.
-      * Without this recursive method, automerge will throw "multiple parents" error for every update activity.
-      */
-      const res = {};
-      Object.keys(obj).forEach(key => {
-        if (!(obj[key] instanceof Object)) {
-          //Primitive type (string,number,etc) map directly into new object.
-          res[key] = obj[key];
-          return;
-        }
-        // nested object, need to delete crdt's internal state first.
-        const nested = _mapToLocalRecursive(obj[key]);
-        res[key] = nested;
-      })
-      return res;
-    }
+    const deepCopy = JSON.parse(JSON.stringify(state));
+    let elements = Object.values(deepCopy.elements);
+    let peers = Object.values(deepCopy.peers);
 
-    const elements = [];
-    const peers = [];
-    Object.keys(state.elements).forEach(key => {
-      elements.push(_mapToLocalRecursive(state.elements[key]));
+    elements = elements.map(el => {
+      if (el[ITEM.ID].startsWith('node')) {
+        return ({
+          id: el[ITEM.ID],
+          type: el[ITEM.TYPE],
+          data: {label: el[ITEM.LABEL]},
+          position: el[ITEM.POSITION],
+          style: {
+            backgroundColor: el[ITEM.BACKGROUND],
+            borderColor: el[ITEM.BORDER]
+          }
+        });
+      } else {
+        return ({
+          id: el[ITEM.ID],
+          source: el[ITEM.SOURCE],
+          target: el[ITEM.TARGET]
+        })
+      }
     });
-    Object.keys(state.peers).forEach(key => {
-      peers.push(_mapToLocalRecursive(state.peers[key]));
-    });
-    console.log('elements:');
-    console.log(elements);
     return {elements, peers};
+    
   }
 }
