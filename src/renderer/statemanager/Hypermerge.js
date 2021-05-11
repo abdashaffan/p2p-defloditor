@@ -23,15 +23,15 @@ export default class Hypermerge {
   }
 
   isOnline() {
-    // TODO: TBD
+    return true;
   }
 
   goOnline() {
-    // TODO: TBD
+    console.log('Online simulation is not supported for Hypermerge sync module');
   }
 
   goOffline() {
-    // TODO: TBD
+    console.log('Offline simulation is not supported for Hypermerge sync module');
   }
 
   addElement(elArr) {
@@ -56,7 +56,7 @@ export default class Hypermerge {
         }
         let curr;
         this.repo.doc(this.url, doc => {
-          curr = JSON.parse(JSON.stringify(doc.elements[el.id]));
+          curr = doc.elements[el.id];
         });
         for (let i = 0; i < updatable.length; i++) {
           const propertyName = updatableKey[i];
