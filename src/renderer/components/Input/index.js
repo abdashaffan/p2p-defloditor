@@ -8,7 +8,6 @@ const UrlInput = ({handleUrlUpdate, validateUrl}) => {
   const [error, setError] = useState(false);
 
   const onUrlSubmit = () => {
-    console.log(`validate: ${validateUrl(input)}`);
     if (!error) {
       handleUrlUpdate(input);
       setInput("");
