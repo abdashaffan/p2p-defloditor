@@ -52,8 +52,6 @@ export default class Hypermerge {
           state.elements[el.id][ITEM.TARGET] = el.target;
         }
       });
-      this._removeOrphanedEdge(state);
-
     });
   }
 
@@ -89,7 +87,6 @@ export default class Hypermerge {
           }
         }
       });
-      this._removeOrphanedEdge(state);
     });
   }
 
