@@ -104,6 +104,7 @@ export default class Ymerge {
   goOnline() {
     console.log('[SIMULATE ONLINE]');
     this.provider.connect();
+    this._addSelfIntoPeerList();
   }
 
   goOffline() {
@@ -251,6 +252,7 @@ export default class Ymerge {
   }
 
   _addSelfIntoPeerList() {
+    this.user.selfId = this._getSelfId();
     this.provider.awareness.setLocalStateField(this.user.selfId, this.user);
   }
 
