@@ -130,8 +130,7 @@ export default class Ymerge {
     }
     this.ydoc = new Y.Doc();
     if (usingStarter) {
-      this.addElement([initialElements['node:1']]);
-      this.addElement([initialElements['node:2']]);
+      this.addElement(Object.values(initialElements));
     }
   }
 
