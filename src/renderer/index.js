@@ -11,5 +11,5 @@ import './index.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Root from './components/Root'
 
-
+localStorage.log = 'y-webrtc'
 ReactDOM.render(<Root />, document.getElementById('app'))
