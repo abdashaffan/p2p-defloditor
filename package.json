@@ -1,13 +1,17 @@
 {
-  "name": "electron-webpack-quick-start-react",
-  "version": "0.0.0",
+  "name": "defloditor",
+  "version": "0.0.1",
   "license": "MIT",
+  "author": {
+    "name": "Abda Shaffan"
+  },
   "scripts": {
     "automerge": "MODULE=HYPERMERGE electron-webpack dev",
     "yjs": "MODULE=YMERGE electron-webpack dev",
     "signal": "y-webrtc-signaling",
     "compile": "electron-webpack",
-    "dist": "yarn compile && electron-builder",
+    "dist": "yarn compile && electron-builder -mwl",
+    "win": "yarn compile && electron-builder --windows portable:x64",
     "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null",
     "postinstall": "npm rebuild --runtime=electron \"--target=$(electron -v)\" \"--abi=$(electron --abi)\" --disturl=https://atom.io/download/atom-shell --scripts-prepend-node-path"
   },
@@ -16,6 +20,7 @@
     "@material-ui/lab": "^4.0.0-alpha.57",
     "bootstrap": "^4.6.0",
     "dotenv": "^8.0.0",
+    "electron-devtools-installer": "^3.2.0",
     "hypermerge": "github:automerge/hypermerge",
     "hyperswarm": "^2.3.1",
     "immutable": "^4.0.0-rc.12",
@@ -37,9 +42,9 @@
     "@babel/preset-react": "^7.0.0",
     "electron": "5.0.6",
     "electron-builder": "21.0.11",
-    "electron-devtools-installer": "^3.2.0",
     "electron-webpack": "^2.7.4",
     "electron-webpack-eslint": "^4.0.1",
+    "electron-winstaller": "^5.0.0",
     "eslint-plugin-react": "^7.12.4",
     "webpack": "~4.35.0"
   }
