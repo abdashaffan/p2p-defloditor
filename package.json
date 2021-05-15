@@ -6,14 +6,14 @@
     "name": "Abda Shaffan"
   },
   "scripts": {
-    "automerge": "MODULE=HYPERMERGE electron-webpack dev",
-    "yjs": "MODULE=YMERGE electron-webpack dev",
+    "automerge": "cross-env MODULE=HYPERMERGE electron-webpack dev",
+    "yjs": "cross-env MODULE=YMERGE electron-webpack dev",
     "signal": "y-webrtc-signaling",
     "compile": "electron-webpack",
     "dist": "yarn compile && electron-builder -mwl",
     "win": "yarn compile && electron-builder --windows portable:x64",
     "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null",
-    "postinstall": "npm rebuild --runtime=electron \"--target=$(electron -v)\" \"--abi=$(electron --abi)\" --disturl=https://atom.io/download/atom-shell --scripts-prepend-node-path"
+    "postinstall": "npm rebuild --runtime=electron \"--target=v5.0.6\" \"--abi=70\" --disturl=https://atom.io/download/atom-shell --scripts-prepend-node-path"
   },
   "dependencies": {
     "@material-ui/core": "^4.11.3",
@@ -40,6 +40,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.4.0",
     "@babel/preset-react": "^7.0.0",
+    "cross-env": "^7.0.3",
     "electron": "5.0.6",
     "electron-builder": "21.0.11",
     "electron-webpack": "^2.7.4",
