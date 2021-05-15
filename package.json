@@ -5,15 +5,25 @@
   "author": {
     "name": "Abda Shaffan"
   },
+  "build": {
+    "npmRebuild": true,
+    "win": {
+      "target": [
+        "portable",
+        "appx"
+      ]
+    }
+  },
   "scripts": {
     "automerge": "cross-env MODULE=HYPERMERGE electron-webpack dev",
     "yjs": "cross-env MODULE=YMERGE electron-webpack dev",
     "signal": "y-webrtc-signaling",
     "compile": "electron-webpack",
     "dist": "yarn compile && electron-builder -mwl",
-    "win": "yarn compile && electron-builder --windows portable:x64",
+    "win": "yarn compile && electron-builder --win --x64",
     "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null",
-    "postinstall": "npm rebuild --runtime=electron \"--target=v5.0.6\" \"--abi=70\" --disturl=https://atom.io/download/atom-shell --scripts-prepend-node-path"
+    "postinstall": "electron-builder install-app-deps",
+    "rebuild-deps": "npm rebuild --runtime=electron \"--target=v5.0.6\" \"--abi=70\" --disturl=https://atom.io/download/atom-shell --scripts-prepend-node-path"
   },
   "dependencies": {
     "@material-ui/core": "^4.11.3",
