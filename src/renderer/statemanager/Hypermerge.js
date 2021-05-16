@@ -42,7 +42,7 @@ export default class Hypermerge {
         if (isANode(el)) {
           state.elements[el.id][ITEM.ID] = el.id;
           state.elements[el.id][ITEM.LABEL] = el.data.label;
-          state.elements[el.id][ITEM.TYPE] = el.type;
+          state.elements[el.id][ITEM.TYPE] = "default";
           state.elements[el.id][ITEM.POSITION] = el.position;
           state.elements[el.id][ITEM.BACKGROUND] = el.style.backgroundColor;
           state.elements[el.id][ITEM.BORDER] = el.style.borderColor;
@@ -132,6 +132,9 @@ export default class Hypermerge {
 
   _watch(callback) {
     this.repo.watch(this.url, (state) => {
+      console.log('[STATE CHANGE]');
+      console.log(state.elements);
+      console.log(state.peers);
       this.doc = state;
       if (callback) {
         callback(this._mapped(state));

@@ -36,7 +36,7 @@ export default class Ymerge {
         if (isANode(el)) {
           newEl.set(ITEM.ID, el.id);
           newEl.set(ITEM.LABEL, el.data.label);
-          newEl.set(ITEM.TYPE, el.type);
+          newEl.set(ITEM.TYPE, "default");
           newEl.set(ITEM.POSITION, el.position);
           newEl.set(ITEM.BACKGROUND, el.style.backgroundColor);
           newEl.set(ITEM.BORDER, el.style.borderColor);
