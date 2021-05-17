@@ -1,3 +1,4 @@
+import os from 'os';
 import * as Y from 'yjs';
 import {v4 as uuidv4} from 'uuid';
 import {WebrtcProvider} from 'y-webrtc';
@@ -23,11 +24,12 @@ export default class Ymerge {
     this.withPersistence = true;
     let url = this._loadUrl();
     console.log(`loaded url: ${url}`);
+    const usingStarter = !url;
     if (!url) {
       // Generate new empty workspace.
       url = `yjs:${uuidv4()}`;
     }
-    this._setup(url, callback, true);
+    this._setup(url, callback, usingStarter);
   }
 
   addElement(elArr) {
@@ -260,7 +262,7 @@ export default class Ymerge {
 
   _createUser() {
     return {
-      name: getAnonymousIdentifier(),
+      name: os.hostname() || getAnonymousIdentifier(),
       color: getRandomColor(),
       selfId: this._getSelfId()
     };

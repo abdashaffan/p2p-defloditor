@@ -9,13 +9,15 @@ import CustomAvatarGroup from "../AvatarGroup";
 import {getAnnotatedPeers} from "../../utils";
 import UrlInput from "../Input";
 import Canvas from "../Canvas";
-import {LinearProgress} from "@material-ui/core";
 import {useEntityManager} from "../../hooks/UseEntityManager";
+import {UseReload} from "../../hooks/UseReload";
+import ReloadBackdrop from "../ReloadBackdrop";
 
 
 const module = env.module;
 
 function Root() {
+
   const {
     elements,
     peers,
@@ -33,52 +35,51 @@ function Root() {
     simulateOnline
   } = useEntityManager(module);
 
-  // eslint-disable-next-line no-constant-condition
-  if (true) {
-    return (
-      <ReactFlowProvider>
-        <Container fluid>
-          <Row className="app-top px-4 py-4">
-            <Col md={7}>
-              <Row><b>Current workspace:</b></Row>
-              <Row>{getUrl()}</Row>
-            </Col>
-            <Col className="d-sm-none d-md-block">
-              <Row>
-                <Col className="d-flex align-items-center justify-content-end">
-                  {
-                    isOnline() && peers && peers.length >= 1 ?
-                      <CustomAvatarGroup peers={getAnnotatedPeers(peers, getUser())}/> :
-                      <div className="offline-info">You are offline</div>
-                  }
-                </Col>
-                <Col xs={8}>
-                  <UrlInput handleUrlUpdate={updateUrl} validateUrl={validateUrl}/>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
+  const {showReloadBtn, reload} = UseReload();
 
-          <Row className="app-bottom">
-            <Canvas
-              show={peers && peers.length !== 0 || !isOnline()}
-              elements={elements}
-              isOnline={isOnline()}
-              handleRemove={deleteShape}
-              handleAddEdge={addNewEdge}
-              handleNodeUpdate={updateNode}
-              handleEdgeUpdate={updateEdgeConnection}
-              handleAddNode={addNewShape}
-              handleGoOnline={simulateOnline}
-              handleGoOffline={simulateOffline}
-              showConnectionToggle={module !== "HYPERMERGE"}
-            />
-          </Row>
-        </Container>
-      </ReactFlowProvider>
-    )
-  }
-  return <LinearProgress/>;
+  return (
+    <ReactFlowProvider>
+      <Container fluid>
+        <Row className="app-top px-4 py-4">
+          <Col md={7}>
+            <Row><b>Current workspace:</b></Row>
+            <Row>{getUrl()}</Row>
+          </Col>
+          <Col className="d-sm-none d-md-block">
+            <Row>
+              <Col className="d-flex align-items-center justify-content-end">
+                {
+                  isOnline() && peers && peers.length >= 1 ?
+                    <CustomAvatarGroup peers={getAnnotatedPeers(peers, getUser())}/> :
+                    <div className="offline-info">You are offline</div>
+                }
+              </Col>
+              <Col xs={8}>
+                <UrlInput handleUrlUpdate={updateUrl} validateUrl={validateUrl}/>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+
+        <Row className="app-bottom">
+          <Canvas
+            show={peers && peers.length !== 0 || !isOnline()}
+            elements={elements}
+            isOnline={isOnline()}
+            handleRemove={deleteShape}
+            handleAddEdge={addNewEdge}
+            handleNodeUpdate={updateNode}
+            handleEdgeUpdate={updateEdgeConnection}
+            handleAddNode={addNewShape}
+            handleGoOnline={simulateOnline}
+            handleGoOffline={simulateOffline}
+            showConnectionToggle={module !== "HYPERMERGE"}
+          />
+        </Row>
+      </Container>
+      <ReloadBackdrop show={showReloadBtn} handleClick={reload}/>
+    </ReactFlowProvider>
+  )
 }
 
 
