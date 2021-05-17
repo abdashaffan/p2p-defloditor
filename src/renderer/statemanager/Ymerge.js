@@ -20,8 +20,9 @@ const customOpts = {signaling: ['ws://localhost:4444']};
 export default class Ymerge {
 
   constructor(callback, withPersistence) {
-    this.withPersistence = withPersistence;
+    this.withPersistence = true;
     let url = this._loadUrl();
+    console.log(`loaded url: ${url}`);
     if (!url) {
       // Generate new empty workspace.
       url = `yjs:${uuidv4()}`;
@@ -157,14 +158,11 @@ export default class Ymerge {
   _initDatabase() {
     if (this.persistence) {
       this.persistence.destroy();
+      this.persistence = null;
     }
     this.persistence = new IndexeddbPersistence(this.url, this.ydoc);
-    this._watchPersistenceSync();
-  }
-
-  _watchPersistenceSync() {
     this.persistence.on('synced', (data) => {
-      console.log('content from the database is loaded', data);
+      console.log('content from the database is loaded:');
     });
   }
 
