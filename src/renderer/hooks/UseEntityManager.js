@@ -2,6 +2,7 @@ import {useState} from "react";
 import {v4 as uuidv4} from 'uuid';
 import Hypermerge from "../statemanager/Hypermerge";
 import Ymerge from "../statemanager/Ymerge";
+import { isAnEdge } from "../utils";
 
 // Only use on the root component
 export const useEntityManager = (module) => {
@@ -64,7 +65,7 @@ export const useEntityManager = (module) => {
       const lastUpdateElements = localState.elements;
       const connectedElements = [];
       lastUpdateElements.forEach(el => {
-        if (el.id === idToBeRemoved || el.source === idToBeRemoved || el.target === idToBeRemoved) {
+        if (isAnEdge(el) && (el.source === idToBeRemoved || el.target === idToBeRemoved)) {
           connectedElements.push(el.id);
         }
       });
