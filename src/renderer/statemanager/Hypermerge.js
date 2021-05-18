@@ -1,4 +1,7 @@
 import Hyperswarm from "hyperswarm";
+import os from 'os';
+import env from "../../common/env";
+import * as fs from "fs";
 import {Repo} from "hypermerge";
 import {initialElements} from "../starter";
 import {validateDocURL} from "hypermerge/dist/Metadata";
@@ -8,7 +11,7 @@ export default class Hypermerge {
 
   constructor(callback) {
     this.swarm = Hyperswarm({queue: {multiplex: true}});
-    this.repo = new Repo({memory: true});
+    this.repo = new Repo({path: env.HYPERMERGE_PATH});
     this.repo.addSwarm(this.swarm, {announce: true});
     this.url = this.repo.create({
       elements: {},
@@ -17,10 +20,13 @@ export default class Hypermerge {
     this.user = this._createUser();
     this._addSelfIntoPeerList();
     this.doc = null;
-    this._watch(callback);
+    const lastWorkspaceUrl = this._loadUrl();
+    if (lastWorkspaceUrl) this.updateWorkspace(lastWorkspaceUrl, callback);
     console.log("workspace url: ", this.url);
+    this._saveUrl();
+    this._watch(callback);
     this._watchPeerConnection();
-    this.addElement(Object.values(initialElements));
+    if (!lastWorkspaceUrl) this.addElement(Object.values(initialElements));
   }
 
   isOnline() {
@@ -118,8 +124,6 @@ export default class Hypermerge {
     this.url = url;
     // might be changed for every workspace reload, so reassign the id just in case.
     this.user.selfId = this._getSelfId();
-    this._watch(callback);
-    this._addSelfIntoPeerList();
   }
 
   getUrl() {
@@ -132,9 +136,6 @@ export default class Hypermerge {
 
   _watch(callback) {
     this.repo.watch(this.url, (state) => {
-      console.log('[STATE CHANGE]');
-      console.log(state.elements);
-      console.log(state.peers);
       this.doc = state;
       if (callback) {
         callback(this._mapped(state));
@@ -175,7 +176,7 @@ export default class Hypermerge {
 
   _createUser() {
     return {
-      name: getAnonymousIdentifier(),
+      name: os.hostname() || getAnonymousIdentifier(),
       color: getRandomColor(),
       selfId: this._getSelfId()
     };
@@ -188,7 +189,6 @@ export default class Hypermerge {
   _watchPeerConnection() {
 
     this.swarm.on('connection', (socket, info) => {
-        console.log('CONNECTION triggered');
         this._addSelfIntoPeerList();
     });
 
@@ -210,6 +210,19 @@ export default class Hypermerge {
 
   _getPeers() {
     return this.repo.back.network.peers;
+  }
+
+  _saveUrl() {
+    const data = {url: this.url};
+    fs.writeFileSync(env.LAST_WORKSPACE_URL_PATH_HYPERMERGE, JSON.stringify(data));
+  }
+
+  _loadUrl() {
+    if (fs.existsSync(env.LAST_WORKSPACE_URL_PATH_HYPERMERGE)) {
+      console.log(`loading last url: ${env.LAST_WORKSPACE_URL_PATH_HYPERMERGE}`);
+      const json = JSON.parse(fs.readFileSync(env.LAST_WORKSPACE_URL_PATH_HYPERMERGE, {encoding: 'utf-8'}));
+      return json.url;
+    }
   }
 
 
