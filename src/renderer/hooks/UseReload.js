@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
+import isOnline from 'is-online';
 const {getCurrentWindow} = require('electron').remote;
 
-const CONN_CHECK_INTERVAL = 1000;
+const CONN_CHECK_INTERVAL = 2000;
 
 export const UseReload = () => {
     
-    const [online, setOnline] = useState(navigator.onLine);
+    const [online, setOnline] = useState(true);
     const [showReloadBtn, setShowReloadBtn] = useState(false);
 
     const reload = () => {
@@ -13,14 +14,18 @@ export const UseReload = () => {
     }
 
     useInterval(() => {
-      const isNowOnline = navigator.onLine;
-      const isReconnected = !online && isNowOnline;
-      if (isReconnected) {
-          setShowReloadBtn(true);
-      } else {
-        setOnline(isNowOnline);
-      }
-      console.log('online:', isNowOnline);      
+
+      (async () => {
+        let isNowOnline = await isOnline();
+        const isReconnected = !online && isNowOnline;
+        if (isReconnected) {
+            setShowReloadBtn(true);
+        } else {
+          setOnline(isNowOnline);
+        }
+        console.log('online:', isNowOnline);  
+      })();
+
     }, CONN_CHECK_INTERVAL);
 
     return {showReloadBtn, reload};

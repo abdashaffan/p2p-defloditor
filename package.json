@@ -34,6 +34,7 @@
     "hypermerge": "github:automerge/hypermerge",
     "hyperswarm": "^2.3.1",
     "immutable": "^4.0.0-rc.12",
+    "is-online": "^9.0.0",
     "react": "^17.0.2",
     "react-bootstrap": "^1.5.2",
     "react-color": "^2.19.3",
