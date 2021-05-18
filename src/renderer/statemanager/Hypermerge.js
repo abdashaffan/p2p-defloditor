@@ -125,6 +125,7 @@ export default class Hypermerge {
     // might be changed for every workspace reload, so reassign the id just in case.
     this.user.selfId = this._getSelfId();
     this._saveUrl();
+    this._watch(callback);
   }
 
   getUrl() {
