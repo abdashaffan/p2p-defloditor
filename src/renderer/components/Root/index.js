@@ -15,6 +15,7 @@ import ReloadBackdrop from "../ReloadBackdrop";
 
 
 const module = env.module;
+const saveToPersistentStorage = env.withPersistence;
 
 function Root() {
 
@@ -30,7 +31,7 @@ function Root() {
     validateUrl,
     getUrl,
     getUser
-  } = useEntityManager(module);
+  } = useEntityManager(module, saveToPersistentStorage);
 
   console.log('peers:');
   console.log(peers);

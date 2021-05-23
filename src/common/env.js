@@ -19,6 +19,7 @@ export const LAST_WORKSPACE_URL_PATH_YMERGE = Path.join(YMERGE_PATH, 'url.json')
 
 export default {
   module: process.env.MODULE,
+  withPersistence: true, // save document into disk.
   isProduction: process.env.NODE_ENV === 'production',
   isDevelopment: process.env.NODE_ENV !== 'production',
   DATA_PATH,

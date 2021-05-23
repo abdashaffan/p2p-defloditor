@@ -21,7 +21,7 @@ const customOpts = {signaling: ['ws://localhost:4444']};
 export default class Ymerge {
 
   constructor(callback, withPersistence) {
-    this.withPersistence = true;
+    this.withPersistence = withPersistence;
     let url = this._loadUrl();
     console.log(`loaded url: ${url}`);
     const usingStarter = !url;

@@ -5,13 +5,13 @@ import Ymerge from "../statemanager/Ymerge";
 import { isAnEdge } from "../utils";
 
 // Only use on the root component
-export const useEntityManager = (module) => {
+export const useEntityManager = (module, withPersistence) => {
   const [localState, setLocalState] = useState({
     elements: [],
     peers: []
   });
 
-  const [syncModule] = useState(() => module === "HYPERMERGE" ? new Hypermerge(setLocalState): new Ymerge(setLocalState));
+  const [syncModule] = useState(() => module === "HYPERMERGE" ? new Hypermerge(setLocalState, withPersistence): new Ymerge(setLocalState, withPersistence));
 
 
   const addNewShape = (el) => {

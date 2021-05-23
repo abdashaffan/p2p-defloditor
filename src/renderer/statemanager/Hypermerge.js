@@ -9,9 +9,10 @@ import {getAnonymousIdentifier, getRandomColor, isANode, ITEM} from "../utils";
 
 export default class Hypermerge {
 
-  constructor(callback) {
+  constructor(callback, withPersistence) {
+    this.withPersistence = withPersistence;
     this.swarm = Hyperswarm({queue: {multiplex: true}});
-    this.repo = new Repo({path: env.HYPERMERGE_PATH});
+    this.repo = this.withPersistence ? new Repo({path: env.HYPERMERGE_PATH}) : new Repo({ memory: true });
     this.repo.addSwarm(this.swarm, {announce: true});
     this.url = this.repo.create({
       elements: {},
@@ -213,16 +214,21 @@ export default class Hypermerge {
   }
 
   _saveUrl() {
-    const data = {url: this.url};
-    fs.writeFileSync(env.LAST_WORKSPACE_URL_PATH_HYPERMERGE, JSON.stringify(data));
+    if (this.withPersistence) {
+      const data = {url: this.url};
+      fs.writeFileSync(env.LAST_WORKSPACE_URL_PATH_HYPERMERGE, JSON.stringify(data));
+    }
   }
 
   _loadUrl() {
-    if (fs.existsSync(env.LAST_WORKSPACE_URL_PATH_HYPERMERGE)) {
-      console.log(`loading last url: ${env.LAST_WORKSPACE_URL_PATH_HYPERMERGE}`);
-      const json = JSON.parse(fs.readFileSync(env.LAST_WORKSPACE_URL_PATH_HYPERMERGE, {encoding: 'utf-8'}));
-      return json.url;
+    if (this.withPersistence) {
+      if (fs.existsSync(env.LAST_WORKSPACE_URL_PATH_HYPERMERGE)) {
+        console.log(`loading last url: ${env.LAST_WORKSPACE_URL_PATH_HYPERMERGE}`);
+        const json = JSON.parse(fs.readFileSync(env.LAST_WORKSPACE_URL_PATH_HYPERMERGE, {encoding: 'utf-8'}));
+        return json.url;
+      }
     }
+    return null;
   }
 
 
