@@ -182,9 +182,13 @@ export default class Hypermerge {
 
   _watchPeerConnection() {
 
+    this.updatePeer(state => {
+      state.peers = {};
+    });
+
     this.swarm.on('connection', (socket, info) => {
-        console.log('[CONNECTION TRIGGERED]');
-        this._addSelfIntoPeerList();
+      console.log('[CONNECTION TRIGGERED]');
+      this._addSelfIntoPeerList();
     });
 
     this.swarm.on('disconnection', (socket, info) => {
@@ -201,7 +205,7 @@ export default class Hypermerge {
           delete state.peers[key];
         })
       });
-    })
+    });
   }
 
   _getPeers() {
