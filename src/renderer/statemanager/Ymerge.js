@@ -23,7 +23,7 @@ export default class Ymerge {
   constructor(callback, withPersistence) {
     this.withPersistence = withPersistence;
     let url = this._loadUrl();
-    console.log(`loaded url: ${url}`);
+    //console.log(`loaded url: ${url}`);
     const usingStarter = !url;
     if (!url) {
       // Generate new empty workspace.
@@ -169,7 +169,7 @@ export default class Ymerge {
     }
     this.persistence = new IndexeddbPersistence(this.url, this.ydoc);
     this.persistence.on('synced', (data) => {
-      console.log('content from the database is loaded:');
+      //console.log('content from the database is loaded:');
     });
   }
 
@@ -182,18 +182,18 @@ export default class Ymerge {
         const key = Object.keys(d)[0];
         const value = d[key];
         peers.push(value);
-      })
-      console.log('[AWARENESS UPDATE]');
-      peers.forEach(p => {
-        console.log(p.name," ", p.selfId);
       });
-      if (added.length) console.log('added', added);
-      if (updated.length) console.log('updated', updated);
-      if (removed.length) console.log('removed', removed);
+      // console.log('[AWARENESS UPDATE]');
+      // peers.forEach(p => {
+      //   console.log(p.name," ", p.selfId);
+      // });
+      // if (added.length) console.log('added', added);
+      // if (updated.length) console.log('updated', updated);
+      // if (removed.length) console.log('removed', removed);
       callback({
         elements: this.getElements(),
         peers
-      })
+      });
     })
     this.provider.on('synced', () => {
       const myData = Array.from(Object.values(this.provider.awareness.getLocalState()));
@@ -201,7 +201,7 @@ export default class Ymerge {
         elements: this.getElements(),
         peers: myData
       })
-    })
+    });
   }
 
   getElements() {
@@ -235,7 +235,7 @@ export default class Ymerge {
 
   _watch(callback) {
     this.ydoc.on('update', () => {
-      console.log('[Ymerge UPDATE]');
+      //console.log('[Ymerge UPDATE]');
       callback(state => ({
         elements: this.getElements(),
         peers: state.peers
@@ -243,12 +243,12 @@ export default class Ymerge {
     });
 
     this.ydoc.getMap(ELEMENTS_KEY).observeDeep(event => {
-      // console.log('[Ymerge] Element observe');
-      // console.log(event);
+      // //console.log('[Ymerge] Element observe');
+      // //console.log(event);
     });
 
     this.ydoc.on('destroy', () => {
-      console.log('[YDOC DESTROY]');
+      //console.log('[YDOC DESTROY]');
       this.provider.destroy();
       this.ydoc = null;
       this.provider = null;

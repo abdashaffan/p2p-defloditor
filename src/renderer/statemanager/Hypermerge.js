@@ -21,9 +21,9 @@ export default class Hypermerge {
     this.user = this._createUser();
     this.doc = null;
     const lastWorkspaceUrl = this._loadUrl();
-    console.log(lastWorkspaceUrl);
+    //console.log(lastWorkspaceUrl);
     if (lastWorkspaceUrl) this.updateWorkspace(lastWorkspaceUrl, callback);
-    console.log("workspace url: ", this.url);
+    //console.log("workspace url: ", this.url);
     this._saveUrl();
     this._watch(callback);
     this._watchPeerConnection();
@@ -78,7 +78,7 @@ export default class Hypermerge {
             changed = (newVal !== lastVal);
           }
           if (changed) {
-            console.log(`${propertyName} updated`);
+            //console.log(`${propertyName} updated`);
             state.elements[el.id][propertyName] = newVal;
           }
         }
@@ -129,7 +129,7 @@ export default class Hypermerge {
 
   _watch(callback) {
     this.repo.watch(this.url, (state) => {
-      console.log('WATCH TRIGGERED');
+      //console.log('WATCH TRIGGERED');
       this.doc = state;
       if (callback) {
         callback(this._mapped(state));
@@ -162,7 +162,7 @@ export default class Hypermerge {
   }
 
   _addSelfIntoPeerList() {
-    console.log(`adding ${this.user.name} into peer list`);
+    //console.log(`adding ${this.user.name} into peer list`);
     this.user.selfId = this._getSelfId();
     this.updatePeer(state => {
       state.peers[this.user.selfId] = this.user;
@@ -188,12 +188,12 @@ export default class Hypermerge {
     });
 
     this.swarm.on('connection', (socket, info) => {
-      console.log('[CONNECTION TRIGGERED]');
+      //console.log('[CONNECTION TRIGGERED]');
       this._addSelfIntoPeerList();
     });
 
     this.swarm.on('disconnection', (socket, info) => {
-      console.log('[DISCONNECTION TRIGGERED]');
+      //console.log('[DISCONNECTION TRIGGERED]');
       const connectedPeers = this._getPeers();
       const deletePeersId = [];
       connectedPeers.forEach((value, key, map) => {
@@ -223,7 +223,7 @@ export default class Hypermerge {
   _loadUrl() {
     if (this.withPersistence) {
       if (fs.existsSync(env.LAST_WORKSPACE_URL_PATH_HYPERMERGE)) {
-        console.log(`loading last url: ${env.LAST_WORKSPACE_URL_PATH_HYPERMERGE}`);
+        //console.log(`loading last url: ${env.LAST_WORKSPACE_URL_PATH_HYPERMERGE}`);
         const json = JSON.parse(fs.readFileSync(env.LAST_WORKSPACE_URL_PATH_HYPERMERGE, {encoding: 'utf-8'}));
         return json.url;
       }
