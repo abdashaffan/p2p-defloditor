@@ -14,11 +14,7 @@ function Canvas({
                   handleAddEdge,
                   handleNodeUpdate,
                   handleEdgeUpdate,
-                  handleAddNode,
-                  isOnline,
-                  handleGoOffline,
-                  handleGoOnline,
-                  showConnectionToggle
+                  handleAddNode
                 }) {
 
   // Differentiate between active and copy shape so the copied shape doesn't
@@ -170,22 +166,12 @@ function Canvas({
     <>
       <Col className="left-sidebar px-4 py-4 d-sm-none d-lg-block" xs={0} lg={4} xl={3}>
         <Row className="my-3">
-          <Col xs={6}>
+          <Col>
             <ActionButton
               variant="primary"
               handleClick={handleNewShapeAddition}
               label="Add New Node"
             />
-          </Col>
-          <Col xs={6}>
-            {
-              (showConnectionToggle && show) &&
-              <ActionButton
-                variant="secondary"
-                handleClick={isOnline ? handleGoOffline : handleGoOnline}
-                label={isOnline ? "Go Offline" : "Go Online"}
-              />
-            }
           </Col>
         </Row>
         <Row className="my-3">

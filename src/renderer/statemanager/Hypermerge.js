@@ -18,27 +18,16 @@ export default class Hypermerge {
       peers: {}
     });
     this.user = this._createUser();
-    this._addSelfIntoPeerList();
     this.doc = null;
     const lastWorkspaceUrl = this._loadUrl();
+    console.log(lastWorkspaceUrl);
     if (lastWorkspaceUrl) this.updateWorkspace(lastWorkspaceUrl, callback);
     console.log("workspace url: ", this.url);
     this._saveUrl();
     this._watch(callback);
     this._watchPeerConnection();
+    this._addSelfIntoPeerList();
     if (!lastWorkspaceUrl) this.addElement(Object.values(initialElements));
-  }
-
-  isOnline() {
-    return true;
-  }
-
-  goOnline() {
-    console.log('Online simulation is not supported for Hypermerge sync module');
-  }
-
-  goOffline() {
-    console.log('Offline simulation is not supported for Hypermerge sync module');
   }
 
   addElement(elArr) {
@@ -126,6 +115,7 @@ export default class Hypermerge {
     this.user.selfId = this._getSelfId();
     this._saveUrl();
     this._watch(callback);
+    this._addSelfIntoPeerList();
   }
 
   getUrl() {
@@ -138,6 +128,7 @@ export default class Hypermerge {
 
   _watch(callback) {
     this.repo.watch(this.url, (state) => {
+      console.log('WATCH TRIGGERED');
       this.doc = state;
       if (callback) {
         callback(this._mapped(state));
@@ -170,6 +161,7 @@ export default class Hypermerge {
   }
 
   _addSelfIntoPeerList() {
+    console.log(`adding ${this.user.name} into peer list`);
     this.user.selfId = this._getSelfId();
     this.updatePeer(state => {
       state.peers[this.user.selfId] = this.user;
@@ -191,10 +183,12 @@ export default class Hypermerge {
   _watchPeerConnection() {
 
     this.swarm.on('connection', (socket, info) => {
+        console.log('[CONNECTION TRIGGERED]');
         this._addSelfIntoPeerList();
     });
 
     this.swarm.on('disconnection', (socket, info) => {
+      console.log('[DISCONNECTION TRIGGERED]');
       const connectedPeers = this._getPeers();
       const deletePeersId = [];
       connectedPeers.forEach((value, key, map) => {

@@ -29,11 +29,12 @@ function Root() {
     updateUrl,
     validateUrl,
     getUrl,
-    getUser,
-    isOnline,
-    simulateOffline,
-    simulateOnline
+    getUser
   } = useEntityManager(module);
+
+  console.log('peers:');
+  console.log(peers);
+  const isContentReady = () => peers && peers.length >= 1;
 
   const {showReloadBtn, reload} = UseReload();
 
@@ -49,7 +50,7 @@ function Root() {
             <Row>
               <Col className="d-flex align-items-center justify-content-end">
                 {
-                  isOnline() && peers && peers.length >= 1 ?
+                  isContentReady() ?
                     <CustomAvatarGroup peers={getAnnotatedPeers(peers, getUser())}/> :
                     <div className="offline-info">You are offline</div>
                 }
@@ -63,17 +64,13 @@ function Root() {
 
         <Row className="app-bottom">
           <Canvas
-            show={peers && peers.length !== 0 || !isOnline()}
+            show={isContentReady()}
             elements={elements}
-            isOnline={isOnline()}
             handleRemove={deleteShape}
             handleAddEdge={addNewEdge}
             handleNodeUpdate={updateNode}
             handleEdgeUpdate={updateEdgeConnection}
             handleAddNode={addNewShape}
-            handleGoOnline={simulateOnline}
-            handleGoOffline={simulateOffline}
-            showConnectionToggle={module !== "HYPERMERGE"}
           />
         </Row>
       </Container>

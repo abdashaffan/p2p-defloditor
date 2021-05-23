@@ -100,23 +100,6 @@ export default class Ymerge {
     return this.user;
   }
 
-  isOnline() {
-    return this.provider.shouldConnect;
-  }
-
-  goOnline() {
-    console.log('[SIMULATE ONLINE]');
-    this.provider.connect();
-    this._addSelfIntoPeerList();
-  }
-
-  goOffline() {
-    if (this.provider.shouldConnect) {
-      console.log('[SIMULATE OFFLINE]');
-      this.provider.disconnect();
-    }
-  }
-
   _setup(url, callback, usingStarter) {
     this.url = url;
     this._initMainDocument(usingStarter);
