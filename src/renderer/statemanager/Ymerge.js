@@ -80,7 +80,29 @@ export default class Ymerge {
     this.ydoc.transact(() => {
       idArr.forEach(id => {
         this.ydoc.getMap(ELEMENTS_KEY).delete(id);
-      })
+      });
+      this.removeOrphanedEdge();
+    });
+  }
+
+  removeOrphanedEdge() {
+    const nodeCount = {};
+    const edgeList = [];
+    this.ydoc.getMap(ELEMENTS_KEY).forEach(el => {
+      const currId = el.get(ITEM.ID);
+      if (el.has(ITEM.SOURCE)) {
+        edgeList.push(el);
+      }
+      if (!nodeCount[currId]) {
+        nodeCount[currId] = 1;
+      } else {
+        nodeCount[currId]++;
+      }
+    });
+    edgeList.forEach(edge => {
+      if (!nodeCount[edge.get(ITEM.SOURCE)] || !nodeCount[edge.get(ITEM.TARGET)]) {
+        this.ydoc.getMap(ELEMENTS_KEY).delete(edge.get(ITEM.ID));
+      }
     });
   }
 
