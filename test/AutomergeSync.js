@@ -11,7 +11,7 @@ class AutomergeSync {
 
   show(label) {
     console.log('\x1b[33m%s\x1b[0m',`\n\n\n[${label.toUpperCase()}:]`);
-    console.log(util.inspect(this.state, {showHidden: false, depth: null}));
+    console.log(util.inspect(this._mapped(this.state), {showHidden: false, depth: null}));
   }
 
   addElement(elArr) {
@@ -77,6 +77,10 @@ class AutomergeSync {
 
   sync(otherState) {
     this.state = Automerge.merge(this.state, otherState);
+  }
+
+  getCrdtState() {
+    return this.state;
   }
 
   getState() {
