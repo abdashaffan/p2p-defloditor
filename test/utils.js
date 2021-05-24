@@ -1,4 +1,5 @@
 const {uniqueNamesGenerator, names} = require('unique-names-generator');
+const { v4: uuidv4 } = require('uuid');
 
 
 const ITEM = Object.freeze({
@@ -59,6 +60,20 @@ const initialElements = {
   }
 }
 
+const generateNewElements = (numOfEl) => {
+  const elements = [];
+  for (let i = 0; i < numOfEl; i++) {
+    const newEl = {};
+    newEl[ITEM.ID] = `node:${uuidv4()}`;
+    newEl[ITEM.TYPE] = "default";
+    newEl["data"] = {label: newEl[ITEM.ID]};
+    newEl[ITEM.POSITION] = {x: 250, y: 25},
+    newEl["style"] = {backgroundColor: 'white',borderColor: 'green'};
+    elements.push(newEl);
+  }
+  return elements;
+}
+
 module.exports = {
   ITEM,
   getAnonymousIdentifier,
@@ -66,5 +81,6 @@ module.exports = {
   getAnnotatedPeers,
   isANode,
   isAnEdge,
-  getRandomColor
+  getRandomColor,
+  generateNewElements
 }
