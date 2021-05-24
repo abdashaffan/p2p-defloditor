@@ -18,6 +18,9 @@ const deleteElementTest = () => {
   console.time(`yjs`);
   y.deleteElement([id]);
   console.timeEnd(`yjs`);
+
+  console.log(`\n\nautomerge document's size : ${a.getDocSizeInBytes()} bytes`);
+  console.log(`yjs document's size: ${y.getDocSizeInBytes()} bytes`);
 }
 
 deleteElementTest();

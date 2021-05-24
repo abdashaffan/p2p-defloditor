@@ -83,6 +83,10 @@ class AutomergeSync {
     return this.state;
   }
 
+  getDocSizeInBytes() {
+    return Automerge.save(this.state).length;
+  }
+
   getState() {
     return this._mapped(this.state);
   }

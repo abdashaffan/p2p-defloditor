@@ -94,12 +94,16 @@ class YjsSync {
     return this.ydoc;
   }
 
+  getDocSizeInBytes() {
+    return Y.encodeStateAsUpdate(this.getCrdtState()).byteLength;
+  }
+
   getState() {
     return {elements: this._getElements(), peers: []};
   }
 
   show(label) {
-    console.log('\x1b[33m%s\x1b[0m',`\n\n\n[${label.toUpperCase()}:]`);
+    console.log('\x1b[33m%s\x1b[0m', `\n\n\n[${label.toUpperCase()}:]`);
     console.log(util.inspect(this.getState(), {showHidden: false, depth: null}));
   }
 
