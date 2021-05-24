@@ -6,7 +6,7 @@ const {generateNewElements} = require('./utils');
 const testElementAddition = () => {
   const numOfElementsToBeTested = [1,10,100,1000];
   numOfElementsToBeTested.forEach(num => {
-    console.log('\x1b[33m%s\x1b[0m',`-- TESTING ${num} ELEMENT ADDITION --`);
+    console.log('\x1b[33m%s\x1b[0m',`-- TESTING ${num} ELEMENT ADDITION PERFORMANCE--`);
     const elements = generateNewElements(num);
     // Automerge
     const a = new AutomergeSync("user-1");
