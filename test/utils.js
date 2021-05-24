@@ -74,6 +74,17 @@ const generateNewElements = (numOfEl) => {
   return elements;
 }
 
+const getMemUsedInMb = () => {
+  // Source: https://github.com/dmonad/crdt-benchmarks/blob/main/benchmarks/utils.js with some changes.
+  if (typeof global !== 'undefined' && typeof process !== 'undefined') {
+    if (global.gc) {
+      global.gc();
+    }
+    return process.memoryUsage().heapUsed / 1024 / 1024;
+  }
+  return 0;
+}
+
 module.exports = {
   ITEM,
   getAnonymousIdentifier,
@@ -82,5 +93,6 @@ module.exports = {
   isANode,
   isAnEdge,
   getRandomColor,
-  generateNewElements
+  generateNewElements,
+  getMemUsedInMb
 }

@@ -10,17 +10,19 @@ const deleteElementTest = () => {
   const a = new AutomergeSync("user-1");
   a.addElement(starters);
   console.time(`automerge`);
-  a.deleteElement([id]);
-  console.timeEnd(`automerge`);
+  a.deleteElement([id], () => {
+    console.timeEnd(`automerge`);
+    console.log(`automerge document's size : ${a.getDocSizeInBytes()} bytes\n\n`);
+  });
   // Yjs
   const y = new YjsSync();
   y.addElement(starters);
   console.time(`yjs`);
-  y.deleteElement([id]);
-  console.timeEnd(`yjs`);
+  y.deleteElement([id], () => {
+    console.timeEnd(`yjs`);
+    console.log(`yjs document's size: ${y.getDocSizeInBytes()} bytes`);
+  });
 
-  console.log(`\n\nautomerge document's size : ${a.getDocSizeInBytes()} bytes`);
-  console.log(`yjs document's size: ${y.getDocSizeInBytes()} bytes`);
 }
 
 deleteElementTest();

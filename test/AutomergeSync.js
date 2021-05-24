@@ -14,7 +14,7 @@ class AutomergeSync {
     console.log(util.inspect(this._mapped(this.state), {showHidden: false, depth: null}));
   }
 
-  addElement(elArr) {
+  addElement(elArr, callback) {
     this.state = Automerge.change(this.state,'add elements', state => {
       elArr.forEach(el => {
         state.elements[el.id] = {};
@@ -32,9 +32,10 @@ class AutomergeSync {
         }
       });
     });
+    if (callback) callback();
   }
 
-  updateElement(elArr) {
+  updateElement(elArr, callback) {
     this.state = Automerge.change(this.state,'update elements', state => {
       elArr.forEach(el => {
         let updatable;
@@ -64,15 +65,17 @@ class AutomergeSync {
         }
       });
     });
+    if (callback) callback();
   }
 
-  deleteElement(idArr) {
+  deleteElement(idArr, callback) {
     this.state = Automerge.change(this.state,'delete elements', state => {
       idArr.forEach(id => {
         delete state.elements[id];
       })
       this._removeOrphanedEdge();
     });
+    if (callback) callback();
   }
 
   sync(otherState) {

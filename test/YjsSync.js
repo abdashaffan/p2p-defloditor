@@ -11,7 +11,7 @@ class YjsSync {
     this.ydoc = new Y.Doc();
   }
 
-  addElement(elArr) {
+  addElement(elArr, callback) {
     this.ydoc.transact(() => {
       elArr.forEach(el => {
         let newEl = new Y.Map();
@@ -30,9 +30,10 @@ class YjsSync {
         this.ydoc.getMap(ELEMENTS_KEY).set(el.id, newEl);
       })
     });
+    if (callback) callback();
   }
 
-  updateElement(elArr) {
+  updateElement(elArr, callback) {
     this.ydoc.transact(() => {
       elArr.forEach(el => {
         let updatable;
@@ -53,15 +54,17 @@ class YjsSync {
         }
       })
     });
+    if (callback) callback();
   }
 
-  deleteElement(idArr) {
+  deleteElement(idArr, callback) {
     this.ydoc.transact(() => {
       idArr.forEach(id => {
         this.ydoc.getMap(ELEMENTS_KEY).delete(id);
       });
       this.removeOrphanedEdge();
     });
+    if (callback) callback();
   }
 
   removeOrphanedEdge() {
