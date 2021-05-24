@@ -51,6 +51,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.4.0",
     "@babel/preset-react": "^7.0.0",
+    "automerge": "github:automerge/automerge#opaque-strings",
     "cross-env": "^7.0.3",
     "electron": "5.0.6",
     "electron-builder": "21.0.11",
