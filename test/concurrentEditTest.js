@@ -21,7 +21,6 @@ function runTest(user1, user2, starterElements, label) {
     memUsedInMb: 0,
     execTimeInMs: 0
   }
-  console.log('\x1b[33m%s\x1b[0m', label);
 
   syncChanges(user1, user2);
 
@@ -48,7 +47,7 @@ function runTest(user1, user2, starterElements, label) {
   return data;
 }
 
-const testConcurrentEditPerf = () => {
+const concurrentEditPerformanceTest = () => {
 
   const NUM_TRIAL = 100;
 
@@ -64,7 +63,7 @@ const testConcurrentEditPerf = () => {
     execTimeInMs: 0
   }
 
-  for (let i = 0; i < NUM_TRIAL; i++) {
+  for (let i = 1; i <= NUM_TRIAL; i++) {
 
     const user1Automerge = new AutomergeSync("user-1");
     const user2Automerge = new AutomergeSync("user-2");
@@ -73,8 +72,8 @@ const testConcurrentEditPerf = () => {
     const starterElements = generateNewElements(1);
 
 
-    const aData = runTest(user1Automerge, user2Automerge, starterElements, `AUTOMERGE TEST ${i + 1}`);
-    const yjsData = runTest(user1Yjs, user2Yjs, starterElements, `YJS TEST ${i + 1}`);
+    const aData = runTest(user1Automerge, user2Automerge, starterElements);
+    const yjsData = runTest(user1Yjs, user2Yjs, starterElements);
 
     Object.keys(automergeAvgData).forEach(metric => {
       automergeAvgData[metric] += aData[metric];
@@ -102,6 +101,4 @@ const testConcurrentEditPerf = () => {
 
 }
 
-
-testConcurrentEditPerf();
-
+module.exports = concurrentEditPerformanceTest;

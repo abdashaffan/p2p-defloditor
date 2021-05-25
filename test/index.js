@@ -1,7 +1,4 @@
-const addElementTest = require("./addElementsTest");
-const deleteElementTest = require("./deleteElementsTest");
-const updateElementTest = require("./updateElementsTest");
-
-addElementTest();
-deleteElementTest();
-updateElementTest();
+require("./addElementsTest")();
+require("./deleteElementsTest")();
+require("./updateElementsTest")();
+require("./concurrentEditTest")();

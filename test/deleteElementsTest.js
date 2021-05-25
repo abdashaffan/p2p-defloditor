@@ -26,7 +26,7 @@ function runTest(syncModule, elements) {
   return data;
 }
 
-const deleteElementTest = () => {
+const deleteElementPerformanceTest = () => {
 
   const NUM_TRIAL = 100;
 
@@ -81,4 +81,4 @@ const deleteElementTest = () => {
 
 }
 
-module.exports = deleteElementTest;
+module.exports = deleteElementPerformanceTest;

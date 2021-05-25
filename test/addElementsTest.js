@@ -23,9 +23,9 @@ function runTest(num, syncModule, elements) {
   return data;
 }
 
-const addElementTest = () => {
+const addElementPerformanceTest = () => {
 
-  const numOfElementsToBeTested = [1,10,200,1000];
+  const numOfElementsToBeTested = [1,10,50,100,200];
 
   numOfElementsToBeTested.forEach(num => {
 
@@ -77,5 +77,5 @@ const addElementTest = () => {
   });
 }
 
-module.exports = addElementTest;
+module.exports = addElementPerformanceTest;
 
