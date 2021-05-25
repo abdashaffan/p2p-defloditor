@@ -33,6 +33,5 @@ const testElementAddition = () => {
   });
 }
 
-testElementAddition();
-
+module.exports = testElementAddition;
 

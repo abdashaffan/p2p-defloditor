@@ -12,7 +12,7 @@ const deleteElementTest = () => {
   console.time(`automerge`);
   a.deleteElement([id], () => {
     console.timeEnd(`automerge`);
-    console.log(`automerge document's size : ${a.getDocSizeInBytes()} bytes\n\n`);
+    console.log(`automerge document's size : ${a.getDocSizeInBytes()} bytes\n`);
   });
   // Yjs
   const y = new YjsSync();
@@ -25,4 +25,4 @@ const deleteElementTest = () => {
 
 }
 
-deleteElementTest();
+module.exports = deleteElementTest;

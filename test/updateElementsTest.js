@@ -19,7 +19,7 @@ const updateElementTest = () => {
   console.time(`automerge`);
   a.updateElement(starters, () => {
     console.timeEnd(`automerge`);
-    console.log(`automerge document's size : ${a.getDocSizeInBytes()} bytes\n\n`);
+    console.log(`automerge document's size : ${a.getDocSizeInBytes()} bytes\n`);
   });
 
   console.time(`yjs`);
@@ -30,4 +30,4 @@ const updateElementTest = () => {
 
 }
 
-updateElementTest();
+module.exports = updateElementTest;

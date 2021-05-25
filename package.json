@@ -23,7 +23,8 @@
     "win": "yarn compile && electron-builder --win --x64",
     "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null",
     "postinstall": "electron-builder install-app-deps",
-    "rebuild-deps": "npm rebuild --runtime=electron \"--target=v5.0.6\" \"--abi=70\" --disturl=https://atom.io/download/atom-shell --scripts-prepend-node-path"
+    "rebuild-deps": "npm rebuild --runtime=electron \"--target=v5.0.6\" \"--abi=70\" --disturl=https://atom.io/download/atom-shell --scripts-prepend-node-path",
+    "performance-test": "node --expose-gc test/index.js"
   },
   "dependencies": {
     "@material-ui/core": "^4.11.3",
