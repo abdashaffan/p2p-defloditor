@@ -3,6 +3,8 @@ const YjsSync = require("./YjsSync");
 const {getMemUsedInMb} = require("./utils");
 const {ITEM} = require("./utils");
 const {generateNewElements} = require("./utils");
+const {performance} = require('perf_hooks');
+
 
 const syncChanges = (user1, user2, callback) => {
   const user1State = user1.getCrdtState();
@@ -14,6 +16,11 @@ const syncChanges = (user1, user2, callback) => {
 
 function runTest(user1, user2, label) {
 
+  let data = {
+    docSizeInBytes: 0,
+    memUsedInMb: 0,
+    execTimeInMs: 0
+  }
   console.log('\x1b[33m%s\x1b[0m',label);
 
   const starterElements = generateNewElements(1);
@@ -33,27 +40,65 @@ function runTest(user1, user2, label) {
   user1.updateElement([changeForUser1]);
   user2.updateElement([changeForUser2]);
 
-  let timePerfLabel = 'time to finish merging the concurrent change';
-  const initialMemUsed = getMemUsedInMb();
-  console.time(timePerfLabel);
+  const initialMemUsed = getMemUsedInMb(true);
+  const initialTime = performance.now();
   syncChanges(user1, user2, () => {
-    console.timeEnd(timePerfLabel);
-    const memUsed = getMemUsedInMb(false) - initialMemUsed;
-    console.log(`mem used: ${memUsed} MB`);
-    console.log(`user1 doc size: ${user1.getDocSizeInBytes()} bytes`);
-    console.log(`user2 doc size: ${user2.getDocSizeInBytes()} bytes`);
+    data.execTimeInMs = performance.now() - initialTime;
+    data.memUsedInMb = getMemUsedInMb(false) - initialMemUsed;
+    data.docSizeInBytes = Math.max(user1.getDocSizeInBytes(), user2.getDocSizeInBytes());
   });
+  return data;
 }
 
 const testConcurrentEditPerf = () => {
 
-  const user1Automerge = new AutomergeSync("user-1");
-  const user2Automerge = new AutomergeSync("user-2");
-  const user1Yjs = new YjsSync();
-  const user2Yjs = new YjsSync();
+  const NUM_TRIAL = 100;
 
-  runTest(user1Automerge, user2Automerge, "AUTOMERGE TEST");
-  runTest(user1Yjs, user2Yjs, "YJS TEST");
+  const automergeAvgData = {
+    docSizeInBytes: 0,
+    memUsedInMb: 0,
+    execTimeInMs: 0
+  }
+
+  const yjsAvgData = {
+    docSizeInBytes: 0,
+    memUsedInMb: 0,
+    execTimeInMs: 0
+  }
+
+  for (let i = 0; i < NUM_TRIAL; i++) {
+
+    const user1Automerge = new AutomergeSync("user-1");
+    const user2Automerge = new AutomergeSync("user-2");
+    const user1Yjs = new YjsSync();
+    const user2Yjs = new YjsSync();
+
+    const aData = runTest(user1Automerge, user2Automerge, `AUTOMERGE TEST ${i+1}`);
+    const yjsData = runTest(user1Yjs, user2Yjs, `YJS TEST ${i+1}`);
+
+    Object.keys(automergeAvgData).forEach(metric => {
+      automergeAvgData[metric] += aData[metric];
+    });
+
+    Object.keys(yjsAvgData).forEach(metric => {
+      yjsAvgData[metric] += yjsData[metric];
+    });
+
+  }
+
+  Object.keys(automergeAvgData).forEach(metric => {
+    automergeAvgData[metric] /= NUM_TRIAL;
+  });
+
+  Object.keys(yjsAvgData).forEach(metric => {
+    yjsAvgData[metric] /= NUM_TRIAL;
+  });
+
+  console.log(`AUTOMERGE AVG FOR ${NUM_TRIAL} TRIALS:`);
+  console.table(automergeAvgData);
+
+  console.log(`YJS AVG FOR ${NUM_TRIAL} TRIALS:`);
+  console.table(yjsAvgData);
 
 }
 
