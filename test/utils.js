@@ -78,7 +78,6 @@ const getMemUsedInMb = (useGc) => {
   // Source: https://github.com/dmonad/crdt-benchmarks/blob/main/benchmarks/utils.js with some changes.
   if (typeof global !== 'undefined' && typeof process !== 'undefined') {
     if (global.gc && useGc) {
-      console.log('gc is global');
       global.gc();
     }
     const res = process.memoryUsage().heapUsed / 1024 / 1024;
