@@ -188,7 +188,12 @@ export default class Hypermerge {
     });
 
     this.swarm.on('connection', (socket, info) => {
-      //console.log('[CONNECTION TRIGGERED]');
+      console.log('[CONNECTION TRIGGERED]');
+      this._addSelfIntoPeerList();
+    });
+
+    this.swarm.on('peer', (socket, info) => {
+      console.log('[PEER TRIGGERED]');
       this._addSelfIntoPeerList();
     });
 
