@@ -7,7 +7,7 @@ const {performance} = require('perf_hooks');
 
 function runTest(syncModule, elements) {
 
-  const id = elements[0].id;
+  const ids = elements.map(el => el.id);
 
   let data = {
     docSizeInBytes: 0,
@@ -17,7 +17,7 @@ function runTest(syncModule, elements) {
 
   const initialMemUsed = getMemUsedInMb(true);
   const initialTime = performance.now();
-  syncModule.deleteElement([id], () => {
+  syncModule.deleteElement(ids, () => {
     data.execTimeInMs = performance.now() - initialTime;
     data.memUsedInMb = getMemUsedInMb(false) - initialMemUsed;
     data.docSizeInBytes = syncModule.getDocSizeInBytes();
@@ -28,56 +28,60 @@ function runTest(syncModule, elements) {
 
 const deleteElementPerformanceTest = () => {
 
-  const NUM_TRIAL = 100;
+  const numOfElementsToBeTested = [1, 10, 50, 100, 200];
+  numOfElementsToBeTested.forEach(num => {
 
-  const automergeAvgData = {
-    docSizeInBytes: 0,
-    memUsedInMb: 0,
-    execTimeInMs: 0
-  }
+    const NUM_TRIAL = 100;
 
-  const yjsAvgData = {
-    docSizeInBytes: 0,
-    memUsedInMb: 0,
-    execTimeInMs: 0
-  }
+    const automergeAvgData = {
+      docSizeInBytes: 0,
+      memUsedInMb: 0,
+      execTimeInMs: 0
+    }
 
-  console.log('\x1b[33m%s\x1b[0m',`-- TESTING ELEMENT DELETION PERFORMANCE --\n`);
-  for (let i = 1; i <= NUM_TRIAL; i++) {
+    const yjsAvgData = {
+      docSizeInBytes: 0,
+      memUsedInMb: 0,
+      execTimeInMs: 0
+    }
 
-    const starters = generateNewElements(1);
+    console.log('\x1b[33m%s\x1b[0m', `-- TESTING ${num} ELEMENT DELETION PERFORMANCE --\n`);
+    for (let i = 1; i <= NUM_TRIAL; i++) {
 
-    const a = new AutomergeSync("user-1");
-    a.addElement(starters);
-    const y = new YjsSync();
-    y.addElement(starters);
+      const starters = generateNewElements(num);
 
-    const aData = runTest(a, starters);
-    const yjsData = runTest(y, starters);
+      const a = new AutomergeSync("user-1");
+      a.addElement(starters);
+      const y = new YjsSync();
+      y.addElement(starters);
+
+      const aData = runTest(a, starters);
+      const yjsData = runTest(y, starters);
+
+      Object.keys(automergeAvgData).forEach(metric => {
+        automergeAvgData[metric] += aData[metric];
+      });
+
+      Object.keys(yjsAvgData).forEach(metric => {
+        yjsAvgData[metric] += yjsData[metric];
+      });
+
+    }
 
     Object.keys(automergeAvgData).forEach(metric => {
-      automergeAvgData[metric] += aData[metric];
+      automergeAvgData[metric] /= NUM_TRIAL;
     });
 
     Object.keys(yjsAvgData).forEach(metric => {
-      yjsAvgData[metric] += yjsData[metric];
+      yjsAvgData[metric] /= NUM_TRIAL;
     });
 
-  }
+    console.log(`AUTOMERGE AVG FOR ${NUM_TRIAL} TRIALS -> DELETING ${num} ELEMENT:`);
+    console.table(automergeAvgData);
 
-  Object.keys(automergeAvgData).forEach(metric => {
-    automergeAvgData[metric] /= NUM_TRIAL;
+    console.log(`YJS AVG FOR ${NUM_TRIAL} TRIALS -> DELETING ${num} ELEMENT:`);
+    console.table(yjsAvgData);
   });
-
-  Object.keys(yjsAvgData).forEach(metric => {
-    yjsAvgData[metric] /= NUM_TRIAL;
-  });
-
-  console.log(`AUTOMERGE AVG FOR ${NUM_TRIAL} TRIALS -> DELETING AN ELEMENT:`);
-  console.table(automergeAvgData);
-
-  console.log(`YJS AVG FOR ${NUM_TRIAL} TRIALS -> DELETING AN ELEMENT:`);
-  console.table(yjsAvgData);
 
 }
 

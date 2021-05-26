@@ -26,59 +26,66 @@ function runTest(syncModule, elements) {
 
 const updateElementPerformanceTest = () => {
 
-  const NUM_TRIAL = 100;
+  const numOfElementsToBeTested = [1, 10, 50, 100, 200];
 
-  const automergeAvgData = {
-    docSizeInBytes: 0,
-    memUsedInMb: 0,
-    execTimeInMs: 0
-  }
+  numOfElementsToBeTested.forEach(num => {
 
-  const yjsAvgData = {
-    docSizeInBytes: 0,
-    memUsedInMb: 0,
-    execTimeInMs: 0
-  }
+    const NUM_TRIAL = 100;
 
-  console.log('\x1b[33m%s\x1b[0m',`-- TESTING ELEMENT UPDATE --\n`);
-  for (let i = 1; i <= NUM_TRIAL; i++) {
+    const automergeAvgData = {
+      docSizeInBytes: 0,
+      memUsedInMb: 0,
+      execTimeInMs: 0
+    }
 
-    const starters = generateNewElements(1);
-    const a = new AutomergeSync("user-1");
-    a.addElement(starters);
-    const y = new YjsSync();
-    y.addElement(starters);
+    const yjsAvgData = {
+      docSizeInBytes: 0,
+      memUsedInMb: 0,
+      execTimeInMs: 0
+    }
 
-    // changing the pos.
-    starters[0].position = {x: 0, y: 0};
+    console.log('\x1b[33m%s\x1b[0m', `-- TESTING ${num} ELEMENT UPDATE PERFORMANCE --\n`);
+    for (let i = 1; i <= NUM_TRIAL; i++) {
 
-    const aData = runTest(a, starters);
-    const yjsData = runTest(y, starters);
+      const starters = generateNewElements(num);
+      const a = new AutomergeSync("user-1");
+      a.addElement(starters);
+      const y = new YjsSync();
+      y.addElement(starters);
+
+      // changing the pos ${num} times.
+      for (let i = 0; i < num; i++) {
+        starters[i].position = {x: 0, y: 0};
+      }
+
+      const aData = runTest(a, starters);
+      const yjsData = runTest(y, starters);
+
+      Object.keys(automergeAvgData).forEach(metric => {
+        automergeAvgData[metric] += aData[metric];
+      });
+
+      Object.keys(yjsAvgData).forEach(metric => {
+        yjsAvgData[metric] += yjsData[metric];
+      });
+
+    }
 
     Object.keys(automergeAvgData).forEach(metric => {
-      automergeAvgData[metric] += aData[metric];
+      automergeAvgData[metric] /= NUM_TRIAL;
     });
 
     Object.keys(yjsAvgData).forEach(metric => {
-      yjsAvgData[metric] += yjsData[metric];
+      yjsAvgData[metric] /= NUM_TRIAL;
     });
 
-  }
+    console.log(`AUTOMERGE AVG FOR ${NUM_TRIAL} TRIALS UPDATING ${num} ELEMENT:`);
+    console.table(automergeAvgData);
 
-  Object.keys(automergeAvgData).forEach(metric => {
-    automergeAvgData[metric] /= NUM_TRIAL;
+    console.log(`YJS AVG FOR ${NUM_TRIAL} TRIALS UPDATING ${num} ELEMENT:`);
+    console.table(yjsAvgData);
+
   });
-
-  Object.keys(yjsAvgData).forEach(metric => {
-    yjsAvgData[metric] /= NUM_TRIAL;
-  });
-
-  console.log(`AUTOMERGE AVG FOR ${NUM_TRIAL} TRIALS UPDATING AN ELEMENT:`);
-  console.table(automergeAvgData);
-
-  console.log(`YJS AVG FOR ${NUM_TRIAL} TRIALS UPDATING AN ELEMENT:`);
-  console.table(yjsAvgData);
-
 }
 
 module.exports = updateElementPerformanceTest;
