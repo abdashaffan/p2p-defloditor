@@ -66,10 +66,17 @@ export default class Ymerge {
           updatableKey = [ITEM.SOURCE, ITEM.TARGET];
         }
         for (let i = 0; i < updatable.length; i++) {
-          const lastVal = this.ydoc.getMap(ELEMENTS_KEY).get(el.id).get(updatableKey[i]);
+          const propertyName = updatableKey[i];
+          const lastVal = this.ydoc.getMap(ELEMENTS_KEY).get(el.id).get(propertyName);
           const newVal = updatable[i];
-          if (newVal !== lastVal) {
-            this.ydoc.getMap(ELEMENTS_KEY).get(el.id).set(updatableKey[i], newVal);
+          let changed = false;
+          if (propertyName === ITEM.POSITION) {
+            changed = (lastVal.x !== newVal.x || lastVal.y !== newVal.y);
+          } else {
+            changed = (newVal !== lastVal);
+          }
+          if (changed) {
+            this.ydoc.getMap(ELEMENTS_KEY).get(el.id).set(propertyName, newVal);
           }
         }
       })
