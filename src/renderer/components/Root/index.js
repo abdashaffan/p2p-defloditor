@@ -33,8 +33,6 @@ function Root() {
     getUser
   } = useEntityManager(module, saveToPersistentStorage);
 
-  console.log('peers:');
-  console.log(peers);
   const isContentReady = () => peers && peers.length >= 1;
 
   const {showReloadBtn, reload} = UseReload();
