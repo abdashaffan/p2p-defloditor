@@ -4,7 +4,7 @@ const {generateNewElements, getMemUsedInMb} = require('./utils');
 const {performance} = require('perf_hooks');
 
 
-function runTest(num, syncModule, elements) {
+function runTest(syncModule, elements) {
 
   let data = {
     docSizeInBytes: 0,
