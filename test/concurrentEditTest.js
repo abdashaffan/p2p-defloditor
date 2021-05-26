@@ -39,7 +39,7 @@ function runTest(userList, starterElements) {
 
   userList.forEach(user => {
     const temp = starterElements[0];
-    temp[ITEM.BACKGROUND] = Math.floor(Math.random() * 16777215).toString(16);
+    temp.style.backgroundColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
     user.updateElement([temp]);
   });
 
