@@ -23,13 +23,9 @@ function runTest(num, syncModule, elements) {
   return data;
 }
 
-const addElementPerformanceTest = () => {
+const addElementPerformanceTest = ({testCases, numTrial}) => {
 
-  const numOfElementsToBeTested = [1,10,50,100,200];
-
-  numOfElementsToBeTested.forEach(num => {
-
-    const NUM_TRIAL = 100;
+  testCases.forEach(num => {
 
     const automergeAvgData = {
       docSizeInBytes: 0,
@@ -44,7 +40,7 @@ const addElementPerformanceTest = () => {
     }
 
     console.log('\x1b[33m%s\x1b[0m',`-- TESTING ${num} ELEMENTS ADDITION --\n`);
-    for (let i = 1; i <= NUM_TRIAL; i++) {
+    for (let i = 1; i <= numTrial; i++) {
 
       const elements = generateNewElements(num);
       const aData = runTest(num, new AutomergeSync("new-user"), elements);
@@ -61,17 +57,17 @@ const addElementPerformanceTest = () => {
     }
 
     Object.keys(automergeAvgData).forEach(metric => {
-      automergeAvgData[metric] /= NUM_TRIAL;
+      automergeAvgData[metric] /= numTrial;
     });
 
     Object.keys(yjsAvgData).forEach(metric => {
-      yjsAvgData[metric] /= NUM_TRIAL;
+      yjsAvgData[metric] /= numTrial;
     });
 
-    console.log(`AUTOMERGE AVG FOR ${NUM_TRIAL} TRIALS ADDING ${num} ELEMENTS:`);
+    console.log(`AUTOMERGE AVG FOR ${numTrial} TRIALS ADDING ${num} ELEMENTS:`);
     console.table(automergeAvgData);
 
-    console.log(`YJS AVG FOR ${NUM_TRIAL} TRIALS ADDING ${num} ELEMENTS:`);
+    console.log(`YJS AVG FOR ${numTrial} TRIALS ADDING ${num} ELEMENTS:`);
     console.table(yjsAvgData);
 
   });
