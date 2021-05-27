@@ -1,6 +1,10 @@
 const AutomergeSync = require('./AutomergeSync');
 const YjsSync = require('./YjsSync');
-const { generateNewElements, getMemUsedInMb } = require('./utils');
+const {
+  generateNewElements,
+  getMemUsedInMb,
+  writeRecordsToCsvFile,
+} = require('./utils');
 const { performance } = require('perf_hooks');
 
 function runTest(syncModule, elements) {
@@ -22,6 +26,8 @@ function runTest(syncModule, elements) {
 }
 
 const addElementPerformanceTest = ({ testCases, numTrial }) => {
+  const records = [];
+
   testCases.forEach((num) => {
     const automergeAvgData = {
       docSizeInBytes: 0,
@@ -61,12 +67,30 @@ const addElementPerformanceTest = ({ testCases, numTrial }) => {
       yjsAvgData[metric] /= numTrial;
     });
 
+    records.push({
+      syncModule: 'Automerge',
+      type: 'Addition',
+      trial: numTrial,
+      case: num,
+      ...automergeAvgData,
+    });
+
+    records.push({
+      syncModule: 'Yjs',
+      type: 'Addition',
+      trial: numTrial,
+      case: num,
+      ...yjsAvgData,
+    });
+
     console.log(`AUTOMERGE AVG FOR ${numTrial} TRIALS ADDING ${num} ELEMENTS:`);
     console.table(automergeAvgData);
 
     console.log(`YJS AVG FOR ${numTrial} TRIALS ADDING ${num} ELEMENTS:`);
     console.table(yjsAvgData);
   });
+
+  writeRecordsToCsvFile(records);
 };
 
 module.exports = addElementPerformanceTest;

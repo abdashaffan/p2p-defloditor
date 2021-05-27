@@ -30,6 +30,7 @@
     "@material-ui/core": "^4.11.3",
     "@material-ui/lab": "^4.0.0-alpha.57",
     "bootstrap": "^4.6.0",
+    "csv-writer": "^1.6.0",
     "dotenv": "^8.0.0",
     "electron-devtools-installer": "^3.2.0",
     "hypermerge": "github:automerge/hypermerge",
