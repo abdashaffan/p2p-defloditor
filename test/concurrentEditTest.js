@@ -1,6 +1,6 @@
 const AutomergeSync = require('./AutomergeSync');
 const YjsSync = require('./YjsSync');
-const { getMemUsedInMb } = require('./utils');
+const { getMemUsedInMb, getRandomColor } = require('./utils');
 const { writeRecordsToCsvFile } = require('./utils');
 const { generateNewElements } = require('./utils');
 const { performance } = require('perf_hooks');
@@ -13,15 +13,7 @@ const syncChanges = (user1, user2, callback) => {
   if (callback) callback();
 };
 
-function runTest(userList, starterElements) {
-  const broadcastChangesToEachOther = (userList, callback) => {
-    for (let i = 0; i < userList.length; i++) {
-      for (let j = 0; j < userList.length; j++) {
-        if (i != j) syncChanges(userList[i], userList[j]);
-      }
-    }
-    if (callback) callback();
-  };
+function runTest(user1, user2, starterElements) {
 
   let data = {
     docSizeInBytes: 0,
@@ -29,30 +21,33 @@ function runTest(userList, starterElements) {
     execTimeInMs: 0,
   };
 
-  userList.forEach((user) => {
-    user.addElement(starterElements);
-  });
-  broadcastChangesToEachOther(userList);
+  user1.addElement(starterElements);
+  user2.addElement(starterElements);
+  syncChanges(user1,user2);
 
-  userList.forEach((user) => {
-    const temp = starterElements[0];
-    temp.style.backgroundColor = `#${Math.floor(
-      Math.random() * 16777215
-    ).toString(16)}`;
-    user.updateElement([temp]);
+  const user1StateAfterChanges = starterElements.map(el => {
+    el.style.backgroundColor = getRandomColor();
+    return el;
   });
+  user1.updateElement(user1StateAfterChanges);
+
+  const user2StateAfterChanges = starterElements.map(el => {
+    el.style.backgroundColor = getRandomColor();
+    return el;
+  });
+  user2.updateElement(user2StateAfterChanges);
+
 
   const initialMemUsed = getMemUsedInMb(true);
   const initialTime = performance.now();
-  broadcastChangesToEachOther(userList, () => {
+  syncChanges(user1, user2, () => {
     data.execTimeInMs = performance.now() - initialTime;
     data.memUsedInMb = getMemUsedInMb(false) - initialMemUsed;
-    userList.forEach((user) => {
-      data.docSizeInBytes = Math.max(
-        data.docSizeInBytes,
-        user.getDocSizeInBytes()
-      );
-    });
+    data.docSizeInBytes = Math.max(
+      data.docSizeInBytes,
+      user1.getDocSizeInBytes(),
+      user2.getDocSizeInBytes()
+    );
   });
   return data;
 }
@@ -60,7 +55,7 @@ function runTest(userList, starterElements) {
 const concurrentEditPerformanceTest = ({ testCases, numTrial }) => {
   const records = [];
 
-  testCases.forEach((totalUser) => {
+  testCases.forEach((totalElements) => {
     const automergeAvgData = {
       docSizeInBytes: 0,
       memUsedInMb: 0,
@@ -74,17 +69,11 @@ const concurrentEditPerformanceTest = ({ testCases, numTrial }) => {
     };
 
     for (let i = 1; i <= numTrial; i++) {
-      let automergeUsers = [];
-      let yjsUsers = [];
-      for (let j = 0; j < totalUser; j++) {
-        automergeUsers.push(new AutomergeSync(`user-${j + 1}`));
-        yjsUsers.push(new YjsSync());
-      }
+      
+      const starterElements = generateNewElements(totalElements);
 
-      const starterElements = generateNewElements(1);
-
-      const aData = runTest(automergeUsers, starterElements);
-      const yjsData = runTest(yjsUsers, starterElements);
+      const aData = runTest(new AutomergeSync("user-1"), new AutomergeSync("user-2"), starterElements);
+      const yjsData = runTest(new YjsSync(), new YjsSync(), starterElements);
 
       Object.keys(automergeAvgData).forEach((metric) => {
         automergeAvgData[metric] += aData[metric];
@@ -107,7 +96,7 @@ const concurrentEditPerformanceTest = ({ testCases, numTrial }) => {
       syncModule: 'Automerge',
       type: 'Concurrent Edit',
       trial: numTrial,
-      case: totalUser,
+      case: totalElements,
       ...automergeAvgData,
     });
 
@@ -115,16 +104,16 @@ const concurrentEditPerformanceTest = ({ testCases, numTrial }) => {
       syncModule: 'Yjs',
       type: 'Concurrent Edit',
       trial: numTrial,
-      case: totalUser,
+      case: totalElements,
       ...yjsAvgData,
     });
 
     console.log(
-      `AUTOMERGE AVG FOR ${numTrial} TRIALS WITH ${totalUser} USERS:`
+      `AUTOMERGE AVG FOR ${numTrial} TRIALS WITH 2 USERS DOING ${totalElements} CONCURRENT CHANGES:`
     );
     console.table(automergeAvgData);
 
-    console.log(`YJS AVG FOR ${numTrial} TRIALS WITH ${totalUser} USERS:`);
+    console.log(`YJS AVG FOR ${numTrial} TRIALS WITH 2 USERS DOING ${totalElements} CONCURRENT CHANGES`);
     console.table(yjsAvgData);
   });
 
